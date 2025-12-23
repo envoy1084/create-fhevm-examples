@@ -1,0 +1,25 @@
+{
+  "author": "Vedant Chainani <vedant@envoy1084.xyz>",
+  "bin": {
+    "create-fhevm-examples": "dist/index.js"
+  },
+  "description": "",
+  "devDependencies": {
+    "@fhevm-examples/config": "workspace:*",
+    "tsup": "^8.3.5",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.16"
+  },
+  "files": ["dist"],
+  "keywords": [],
+  "license": "MIT",
+  "name": "create-fhevm-examples",
+  "private": false,
+  "scripts": {
+    "build": "tsup",
+    "dev": "vitest",
+    "test": "vitest run"
+  },
+  "type": "module",
+  "version": "0.0.0"
+}

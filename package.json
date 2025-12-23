@@ -3,6 +3,7 @@
   "description": "",
   "devDependencies": {
     "@biomejs/biome": "2.3.10",
+    "@changesets/cli": "^2.29.8",
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
     "@fhevm-examples/config": "workspace:*",
@@ -13,9 +14,11 @@
   "keywords": [],
   "license": "MIT",
   "name": "@fhevm-examples/core",
+  "packageManager": "pnpm@10.15.0",
   "private": true,
   "scripts": {
     "build": "turbo build",
+    "changeset": "changeset",
     "commitlint": "commitlint --edit",
     "dev": "turbo dev",
     "format": "pnpm exec biome format --write",
@@ -23,7 +26,9 @@
     "lint": "pnpm exec biome check --write",
     "lint:check": "pnpm exec biome check",
     "lint:write": "turbo lint:write",
-    "prepare": "lefthook install"
+    "prepare": "lefthook install",
+    "release": "turbo build --filter=create-fhevm-examples && changeset publish",
+    "version-packages": "changeset version"
   },
   "version": "0.0.0"
 }
