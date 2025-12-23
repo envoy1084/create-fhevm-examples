@@ -185,6 +185,9 @@ importers:
       rimraf:
         specifier: ^6.1.2
         version: 6.1.2
+      solidity-docgen:
+        specifier: 0.6.0-beta.36
+        version: 0.6.0-beta.36(hardhat@2.28.0(ts-node@10.9.2(@types/node@24.10.4)(typescript@5.9.3))(typescript@5.9.3))
 
   packages/template:
     dependencies:
@@ -231,6 +234,9 @@ importers:
       rimraf:
         specifier: ^6.1.2
         version: 6.1.2
+      solidity-docgen:
+        specifier: 0.6.0-beta.36
+        version: 0.6.0-beta.36(hardhat@2.28.0(ts-node@10.9.2(@types/node@24.10.4)(typescript@5.9.3))(typescript@5.9.3))
 
 packages:
 
@@ -3251,6 +3257,9 @@ packages:
     engines: {node: '>=10.0.0'}
     hasBin: true
 
+  solidity-ast@0.4.61:
+    resolution: {integrity: sha512-OYBJYcYyG7gLV0VuXl9CUrvgJXjV/v0XnR4+1YomVe3q+QyENQXJJxAEASUz4vN6lMAl+C8RSRSr5MBAz09f6w==}
+
   solidity-comments-darwin-arm64@0.1.1:
     resolution: {integrity: sha512-ze1+YboHm8tRJXCoFEsxtU1gpvQ3rCH55xMtBH6dtyh1/gz4qrKCOUBaAP+IHplbzCacZBn+Pz3UmMDOoGshRw==}
     engines: {node: '>= 10'}
@@ -3268,6 +3277,11 @@ packages:
     hasBin: true
     peerDependencies:
       hardhat: ^2.11.0
+
+  solidity-docgen@0.6.0-beta.36:
+    resolution: {integrity: sha512-f/I5G2iJgU1h0XrrjRD0hHMr7C10u276vYvm//rw1TzFcYQ4xTOyAoi9oNAHRU0JU4mY9eTuxdVc2zahdMuhaQ==}
+    peerDependencies:
+      hardhat: ^2.8.0
 
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
@@ -7258,6 +7272,8 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
+  solidity-ast@0.4.61: {}
+
   solidity-comments-darwin-arm64@0.1.1:
     optional: true
 
@@ -7286,6 +7302,12 @@ snapshots:
       semver: 7.7.3
       shelljs: 0.8.5
       web3-utils: 1.10.4
+
+  solidity-docgen@0.6.0-beta.36(hardhat@2.28.0(ts-node@10.9.2(@types/node@24.10.4)(typescript@5.9.3))(typescript@5.9.3)):
+    dependencies:
+      handlebars: 4.7.8
+      hardhat: 2.28.0(ts-node@10.9.2(@types/node@24.10.4)(typescript@5.9.3))(typescript@5.9.3)
+      solidity-ast: 0.4.61
 
   source-map-js@1.2.1: {}
 

@@ -17,7 +17,8 @@
     "dotenv": "^17.2.3",
     "ethers": "^6.15.0",
     "hardhat": "^2.26.0",
-    "rimraf": "^6.1.2"
+    "rimraf": "^6.1.2",
+    "solidity-docgen": "0.6.0-beta.36"
   },
   "keywords": [],
   "license": "MIT",
@@ -26,6 +27,7 @@
   "scripts": {
     "clean": "rimraf  ./fhevmTemp ./artifacts ./cache ./coverage ./types ./coverage.json ./dist",
     "compile": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat compile",
+    "docgen": "hardhat docgen",
     "test": "hardhat test"
   },
   "version": "0.0.0"
