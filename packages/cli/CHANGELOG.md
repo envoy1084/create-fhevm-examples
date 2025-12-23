@@ -1,5 +1,11 @@
 # create-fhevm-examples
 
+## 0.0.3
+
+### Patch Changes
+
+- befe8fa: update contracts root
+
 ## 0.0.2
 
 ### Patch Changes
