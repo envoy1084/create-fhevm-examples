@@ -13,6 +13,7 @@ export const copyWithGitignore = async (srcDir, destDir) => {
   if (await fs.pathExists(gitignorePath)) {
     const gitignore = await fs.readFile(gitignorePath, "utf8");
     ig.add(gitignore);
+    ig.add(".gitignore");
   }
 
   ig.add(".git");

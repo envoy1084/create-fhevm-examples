@@ -7,8 +7,9 @@ export const copyWithGitignore = async (srcDir: string, destDir: string) => {
   const ig = ignore();
 
   const gitignorePath = path.join(srcDir, ".gitignore");
+  const gitIgnoreExists = await fs.pathExists(gitignorePath);
 
-  if (await fs.pathExists(gitignorePath)) {
+  if (gitIgnoreExists) {
     const gitignore = await fs.readFile(gitignorePath, "utf8");
     ig.add(gitignore);
   }
