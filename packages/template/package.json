@@ -20,13 +20,13 @@
     "rimraf": "^6.1.2"
   },
   "keywords": [],
-  "license": "ISC",
-  "main": "index.js",
+  "license": "MIT",
   "name": "fhevm-hardhat-example",
+  "private": true,
   "scripts": {
     "clean": "rimraf  ./fhevmTemp ./artifacts ./cache ./coverage ./types ./coverage.json ./dist",
     "compile": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat compile",
     "test": "hardhat test"
   },
-  "version": "1.0.0"
+  "version": "0.0.0"
 }
