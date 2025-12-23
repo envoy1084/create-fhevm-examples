@@ -5,7 +5,7 @@
   "changelog": "@changesets/cli/changelog",
   "commit": false,
   "fixed": [],
-  "ignore": [],
+  "ignore": ["fhevm-hardhat-example"],
   "linked": [],
   "updateInternalDependencies": "patch"
 }
