@@ -55,7 +55,7 @@ const config = {
   paths: {
     artifacts: "./artifacts",
     cache: "./cache",
-    sources: "./src",
+    sources: "./contracts",
     tests: "./test",
   },
   solidity: {

@@ -21,16 +21,7 @@ export async function createProject() {
   // Step 3: Copy Example specific files
   await copyExampleFiles({ example: args.example, targetDir });
 
-  // Step 4: Initialize Git if enabled
-  if (args.git) {
-    const s = prompt.spinner();
-    s.start("Initializing Git...");
-    await initializeGit({ targetDir });
-    s.stop("Git initialized");
-  }
-
-  // Step 5. Install dependencies if enabled
-
+  // Step 4. Install dependencies if enabled
   if (args.install) {
     const s = prompt.spinner();
     s.start("Installing dependencies...");
@@ -39,5 +30,13 @@ export async function createProject() {
       targetDir,
     });
     s.stop("Dependencies installed");
+  }
+
+  // Step 5: Initialize Git if enabled
+  if (args.git) {
+    const s = prompt.spinner();
+    s.start("Initializing Git...");
+    await initializeGit({ targetDir });
+    s.stop("Git initialized");
   }
 }

@@ -38,9 +38,6 @@ importers:
       '@clack/prompts':
         specifier: 1.0.0-alpha.8
         version: 1.0.0-alpha.8
-      '@fhevm-examples/examples':
-        specifier: workspace:*
-        version: link:../examples
       commander:
         specifier: ^14.0.2
         version: 14.0.2
@@ -106,6 +103,52 @@ importers:
       '@fhevm-examples/config':
         specifier: workspace:*
         version: link:../config
+      '@fhevm/hardhat-plugin':
+        specifier: ^0.3.0-3
+        version: 0.3.0-3(@fhevm/mock-utils@0.3.0-3(@zama-fhe/relayer-sdk@0.3.0-6)(ethers@6.16.0)(typescript@5.9.3))(@fhevm/solidity@0.9.1)(@nomicfoundation/hardhat-ethers@3.1.3(ethers@6.16.0)(hardhat@2.28.0(ts-node@10.9.2(@types/node@24.10.4)(typescript@5.9.3))(typescript@5.9.3)))(@zama-fhe/relayer-sdk@0.3.0-6)(encrypted-types@0.0.4)(ethers@6.16.0)(hardhat@2.28.0(ts-node@10.9.2(@types/node@24.10.4)(typescript@5.9.3))(typescript@5.9.3))
+      '@nomicfoundation/hardhat-ethers':
+        specifier: ^3.1.0
+        version: 3.1.3(ethers@6.16.0)(hardhat@2.28.0(ts-node@10.9.2(@types/node@24.10.4)(typescript@5.9.3))(typescript@5.9.3))
+      '@nomicfoundation/hardhat-toolbox':
+        specifier: ^5
+        version: 5.0.0(68ad48c70df1b12cf81504c73ab8dfa6)
+      '@types/chai':
+        specifier: ^5.2.3
+        version: 5.2.3
+      '@types/node':
+        specifier: ^24.10.4
+        version: 24.10.4
+      '@zama-fhe/relayer-sdk':
+        specifier: 0.3.0-6
+        version: 0.3.0-6
+      chai:
+        specifier: ^5.3.1
+        version: 5.3.3
+      cross-env:
+        specifier: ^10.1.0
+        version: 10.1.0
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
+      ethers:
+        specifier: ^6.15.0
+        version: 6.16.0
+      hardhat:
+        specifier: ^2.26.0
+        version: 2.28.0(ts-node@10.9.2(@types/node@24.10.4)(typescript@5.9.3))(typescript@5.9.3)
+      rimraf:
+        specifier: ^6.1.2
+        version: 6.1.2
+
+  packages/temp:
+    dependencies:
+      '@fhevm/solidity':
+        specifier: ^0.9.1
+        version: 0.9.1
+      encrypted-types:
+        specifier: ^0.0.4
+        version: 0.0.4
+    devDependencies:
       '@fhevm/hardhat-plugin':
         specifier: ^0.3.0-3
         version: 0.3.0-3(@fhevm/mock-utils@0.3.0-3(@zama-fhe/relayer-sdk@0.3.0-6)(ethers@6.16.0)(typescript@5.9.3))(@fhevm/solidity@0.9.1)(@nomicfoundation/hardhat-ethers@3.1.3(ethers@6.16.0)(hardhat@2.28.0(ts-node@10.9.2(@types/node@24.10.4)(typescript@5.9.3))(typescript@5.9.3)))(@zama-fhe/relayer-sdk@0.3.0-6)(encrypted-types@0.0.4)(ethers@6.16.0)(hardhat@2.28.0(ts-node@10.9.2(@types/node@24.10.4)(typescript@5.9.3))(typescript@5.9.3))

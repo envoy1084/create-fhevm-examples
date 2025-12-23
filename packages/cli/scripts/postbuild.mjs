@@ -36,7 +36,7 @@ const __dirname = path.dirname(__filename);
 const DEST = path.resolve(__dirname, "../dist");
 
 const TESTS_SRC = path.resolve(__dirname, "../../examples/test");
-const EXAMPLES_SRC = path.resolve(__dirname, "../../examples/src");
+const EXAMPLES_SRC = path.resolve(__dirname, "../../examples/contracts");
 const TEMPLATES_SRC = path.resolve(__dirname, "../../template");
 
 const EXAMPLES_DEST = path.resolve(__dirname, "../dist/examples");
@@ -56,7 +56,7 @@ async function main() {
     const contractPath = path.join(EXAMPLES_SRC, example);
     const testsPath = path.join(TESTS_SRC, example);
 
-    const contractDestPath = path.join(EXAMPLES_DEST, example, "src");
+    const contractDestPath = path.join(EXAMPLES_DEST, example, "contracts");
     const testsDestPath = path.join(EXAMPLES_DEST, example, "test");
 
     await copyWithGitignore(contractPath, contractDestPath);

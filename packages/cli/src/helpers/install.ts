@@ -11,6 +11,6 @@ export const installDependencies = async ({
 }: InstallDependenciesOptions) => {
   await execa(packageManager, ["install"], {
     cwd: targetDir,
-    stdio: "inherit",
+    stdio: "ignore",
   });
 };
