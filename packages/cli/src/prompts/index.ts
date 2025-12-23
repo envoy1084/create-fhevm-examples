@@ -1,9 +1,10 @@
 import path from "node:path";
 
 import * as prompt from "@clack/prompts";
-import { examples } from "@fhevm-examples/examples";
 import fs from "fs-extra";
 import whichPMRuns from "which-pm-runs";
+
+import { examples } from "../data/index.js";
 
 type PromptAnswers = {
   directory: string;

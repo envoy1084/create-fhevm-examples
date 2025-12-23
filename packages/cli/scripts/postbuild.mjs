@@ -15,17 +15,14 @@ export const copyWithGitignore = async (srcDir, destDir) => {
     ig.add(gitignore);
   }
 
-  // Always ignore .git folders
   ig.add(".git");
 
   await fs.copy(srcDir, destDir, {
     filter: (src) => {
       const rel = path.relative(srcDir, src);
 
-      // Always allow root
       if (!rel) return true;
 
-      // Normalize for ignore()
       const normalized = rel.split(path.sep).join("/");
 
       return !ig.ignores(normalized);
@@ -38,18 +35,33 @@ const __dirname = path.dirname(__filename);
 
 const DEST = path.resolve(__dirname, "../dist");
 
-const EXAMPLES_SRC = path.resolve(__dirname, "../../examples/src/examples");
-const EXAMPLES_DEST = path.resolve(__dirname, "../dist/examples");
-
+const TESTS_SRC = path.resolve(__dirname, "../../examples/test");
+const EXAMPLES_SRC = path.resolve(__dirname, "../../examples/src");
 const TEMPLATES_SRC = path.resolve(__dirname, "../../template");
+
+const EXAMPLES_DEST = path.resolve(__dirname, "../dist/examples");
 const TEMPLATES_DEST = path.resolve(__dirname, "../dist/template");
 
 async function main() {
   await fs.remove(EXAMPLES_DEST);
   await fs.remove(TEMPLATES_DEST);
 
-  await copyWithGitignore(EXAMPLES_SRC, EXAMPLES_DEST);
   await copyWithGitignore(TEMPLATES_SRC, TEMPLATES_DEST);
+
+  const examplesFolders = await fs.readdir(EXAMPLES_SRC);
+
+  for (const folder of examplesFolders) {
+    const example = folder;
+
+    const contractPath = path.join(EXAMPLES_SRC, example);
+    const testsPath = path.join(TESTS_SRC, example);
+
+    const contractDestPath = path.join(EXAMPLES_DEST, example, "src");
+    const testsDestPath = path.join(EXAMPLES_DEST, example, "test");
+
+    await copyWithGitignore(contractPath, contractDestPath);
+    await copyWithGitignore(testsPath, testsDestPath);
+  }
 
   folderSize(DEST, (err, bytes) => {
     if (err) {

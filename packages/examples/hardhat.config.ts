@@ -2,7 +2,6 @@ import "@fhevm/hardhat-plugin";
 
 import * as dotenv from "dotenv";
 import "@nomicfoundation/hardhat-toolbox";
-// import "hardhat-deploy";
 
 dotenv.config();
 

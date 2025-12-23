@@ -1,7 +1,7 @@
 import fs from "fs-extra";
 
-import { resolveExamplePath } from "../resolve/index.js";
-import { copyWithGitignore } from "./copy.ts";
+import { resolveExamplePath } from "../resolve/examples.ts";
+import { copyWithGitignore } from "./copy.js";
 
 type CopyExampleFilesOptions = {
   example: string;
