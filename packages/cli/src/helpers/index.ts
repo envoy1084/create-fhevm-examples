@@ -12,3 +12,9 @@ export const validateOutputDir = async (dir: string) => {
 
   return targetDir;
 };
+
+export * from "./copy.js";
+export * from "./deps.js";
+export * from "./examples.js";
+export * from "./git.js";
+export * from "./template.js";

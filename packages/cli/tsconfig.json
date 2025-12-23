@@ -6,5 +6,5 @@
   },
   "exclude": ["node_modules", "dist"],
   "extends": "@fhevm-examples/config/tsconfig/library/node",
-  "include": ["**/*.ts", "**/*.tsx"]
+  "include": ["**/*.ts", "**/*.tsx", "scripts/postbuild.mjs"]
 }

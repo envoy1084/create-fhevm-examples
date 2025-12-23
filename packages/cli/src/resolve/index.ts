@@ -16,3 +16,8 @@ export const resolveExamplePath = (opts: ResolveExamplePathOptions) => {
   const examplePath = path.join(examplesRoot, opts.example);
   return examplePath;
 };
+
+export const getTemplatePath = () => {
+  const templateRoot = path.join(__dirname, "template");
+  return templateRoot;
+};
