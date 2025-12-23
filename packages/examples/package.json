@@ -1,0 +1,16 @@
+{
+  "author": "Vedant Chainani <vedant@envoy1084.xyz>",
+  "description": "",
+  "devDependencies": {
+    "@fhevm-examples/config": "workspace:*",
+    "@types/node": "^24.10.4"
+  },
+
+  "keywords": [],
+  "license": "MIT",
+  "main": "src/index.ts",
+  "name": "@fhevm-examples/examples",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0"
+}

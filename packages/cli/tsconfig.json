@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "incremental": false
+  },
+  "exclude": ["node_modules", "dist"],
+  "extends": "@fhevm-examples/config/tsconfig/library/node",
+  "include": ["**/*.ts", "**/*.tsx"]
+}
