@@ -31,3 +31,8 @@ tmp
 .DS_Store
 .pnp.*
 coverage.json
+
+# Ignore the .env file
+.env
+.env.*
+!.env.example
