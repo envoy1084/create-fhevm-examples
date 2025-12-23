@@ -1,0 +1,31 @@
+{
+  "author": "Vedant Chainani <vedant@envoy1084.xyz>",
+  "devDependencies": {
+    "@biomejs/biome": "2.3.10"
+  },
+  "exports": {
+    "./biome": "./biome/base.json",
+    "./biome/base": "./biome/base.json",
+    "./biome/next": "./biome/next.json",
+    "./biome/react": "./biome/react.json",
+    "./biome/test": "./biome/test.json",
+    "./tsconfig/app/next": "./tsconfig/app/next.json",
+    "./tsconfig/app/node": "./tsconfig/app/node.json",
+    "./tsconfig/app/vite": "./tsconfig/app/vite.json",
+    "./tsconfig/library": "./tsconfig/library/base.json",
+    "./tsconfig/library/base": "./tsconfig/library/base.json",
+    "./tsconfig/library/browser": "./tsconfig/library/browser.json"
+  },
+  "files": ["./biome", "./tsconfig"],
+  "license": "MIT",
+  "name": "@fhevm-examples/config",
+  "private": true,
+  "scripts": {
+    "format": "pnpm exec biome format",
+    "format:write": "pnpm exec biome format --write",
+    "lint": "pnpm exec biome lint && pnpm exec biome check",
+    "lint:write": "pnpm exec biome lint --write && pnpm exec biome check --write"
+  },
+  "type": "module",
+  "version": "0.0.1"
+}

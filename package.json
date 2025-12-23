@@ -1,0 +1,29 @@
+{
+  "author": "Vedant Chainani <vedant@envoy1084.xyz>",
+  "description": "",
+  "devDependencies": {
+    "@biomejs/biome": "2.3.10",
+    "@commitlint/cli": "^20.1.0",
+    "@commitlint/config-conventional": "^20.0.0",
+    "@fhevm-examples/config": "workspace:*",
+    "lefthook": "^2.0.12",
+    "turbo": "^2.5.8",
+    "typescript": "^5.9.3"
+  },
+  "keywords": [],
+  "license": "MIT",
+  "name": "@fhevm-examples/core",
+  "private": true,
+  "scripts": {
+    "build": "turbo build",
+    "commitlint": "commitlint --edit",
+    "dev": "turbo dev",
+    "format": "pnpm exec biome format --write",
+    "format:check": "pnpm exec biome format",
+    "lint": "pnpm exec biome check --write",
+    "lint:check": "pnpm exec biome check",
+    "lint:write": "turbo lint:write",
+    "prepare": "lefthook install"
+  },
+  "version": "0.0.0"
+}
