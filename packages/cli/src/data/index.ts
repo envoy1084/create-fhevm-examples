@@ -1,14 +1,8 @@
+import type { PackageJson } from "type-fest";
+
 export type Example = {
   label: string;
-  package: {
-    description: string;
-    name: string;
-    version: string;
-    dependencies?: Record<string, string>;
-    devDependencies?: Record<string, string>;
-    scripts?: Record<string, string>;
-    keywords: string[];
-  };
+  packageJson: PackageJson;
   path: string;
   value: string;
 };
@@ -16,7 +10,7 @@ export type Example = {
 export const examples: Example[] = [
   {
     label: "Counter",
-    package: {
+    packageJson: {
       description: "A simple counter contract",
       keywords: ["fhevm", "counter", "example"],
       name: "@fhevm-examples/counter",

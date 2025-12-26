@@ -17,5 +17,5 @@ export * from "./copy.js";
 export * from "./examples.js";
 export * from "./git.js";
 export * from "./install.js";
-export * from "./package.js";
+export * from "./package/index.ts";
 export * from "./template.js";

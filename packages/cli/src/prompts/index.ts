@@ -5,7 +5,10 @@ import fs from "fs-extra";
 import whichPMRuns from "which-pm-runs";
 
 import { examples } from "../data/index.js";
-import { type PackageManager, packageManagers } from "../helpers/package.ts";
+import {
+  type PackageManager,
+  packageManagers,
+} from "../helpers/package/index.ts";
 
 export type PromptAnswers = {
   directory: string;
