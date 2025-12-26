@@ -1,19 +1,23 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { examples } from "../data/index.js";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 type ResolveExamplePathOptions = {
-  example: string;
+  exampleName: string;
 };
 
 export const resolveExamplePath = (opts: ResolveExamplePathOptions) => {
-  if (!opts.example) {
+  if (!opts.exampleName) {
     throw new Error("Example must be specified");
   }
   const examplesRoot = path.join(__dirname, "examples");
-  const examplePath = path.join(examplesRoot, opts.example);
+  // biome-ignore lint/style/noNonNullAssertion: safe
+  const example = examples.find((e) => e.value === opts.exampleName)!;
+  const examplePath = path.join(examplesRoot, example.path);
   return examplePath;
 };
 

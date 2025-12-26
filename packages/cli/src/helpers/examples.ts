@@ -4,15 +4,15 @@ import { resolveExamplePath } from "../resolve/examples.ts";
 import { copyWithGitignore } from "./copy.js";
 
 type CopyExampleFilesOptions = {
-  example: string;
+  exampleName: string;
   targetDir: string;
 };
 
 export const copyExampleFiles = async ({
-  example,
+  exampleName,
   targetDir,
 }: CopyExampleFilesOptions) => {
-  const examplePath = resolveExamplePath({ example });
+  const examplePath = resolveExamplePath({ exampleName });
 
   if (!(await fs.pathExists(examplePath))) {
     return;

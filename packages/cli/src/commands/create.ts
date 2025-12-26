@@ -27,7 +27,7 @@ export async function createProject() {
   await copyTemplate(targetDir);
 
   // Copy Example specific files
-  await copyExampleFiles({ example: args.example, targetDir });
+  await copyExampleFiles({ exampleName: args.example, targetDir });
 
   // Update package.json for example specific content
   await updatePackageJson(targetDir, args.example, args.packageManager);
