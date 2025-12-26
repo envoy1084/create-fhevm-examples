@@ -5,16 +5,15 @@ import fs from "fs-extra";
 import whichPMRuns from "which-pm-runs";
 
 import { examples } from "../data/index.js";
+import { type PackageManager, packageManagers } from "../helpers/package.ts";
 
-type PromptAnswers = {
+export type PromptAnswers = {
   directory: string;
   example: string;
   git: boolean;
-  packageManager: string;
+  packageManager: PackageManager;
   install: boolean;
 };
-
-const packageManagers = ["npm", "pnpm", "yarn", " bun"] as const;
 
 export const getArguments = async (): Promise<PromptAnswers> => {
   prompt.intro("Welcome to FHEVM Examples 🔐");
@@ -54,7 +53,7 @@ export const getArguments = async (): Promise<PromptAnswers> => {
           maxItems: 5,
           message: "What example do you want to use?",
           options: examples.map((v) => ({
-            hint: v.description,
+            hint: v.package.description,
             label: v.label,
             value: v.value,
           })),
@@ -91,5 +90,5 @@ export const getArguments = async (): Promise<PromptAnswers> => {
     },
   );
 
-  return args;
+  return args as PromptAnswers;
 };
