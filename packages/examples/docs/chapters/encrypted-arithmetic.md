@@ -1,8 +1,6 @@
 ---
-title: false
+title: Encrypted Arithmetic
 ---
-
-# Encrypted Arithmetic
 
 ## Overview
 

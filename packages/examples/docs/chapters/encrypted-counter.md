@@ -1,8 +1,6 @@
 ---
-title: false
+title: Encrypted Counter
 ---
-
-# Encrypted Counter
 
 ## Overview
 

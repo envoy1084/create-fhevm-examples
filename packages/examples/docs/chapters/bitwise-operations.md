@@ -1,8 +1,6 @@
 ---
-title: false
+title: Bitwise Operations
 ---
-
-# Bitwise Operations
 
 ## Overview
 

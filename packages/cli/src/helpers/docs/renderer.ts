@@ -65,11 +65,10 @@ export class MarkdownRenderer {
   }
 
   private generateChapterContent(chapter: DocChapter): string {
-    const frontMatter = `---\ntitle: false\n---\n\n`;
+    const frontMatter = `---\ntitle: ${chapter.title}\n---\n\n`;
     let md = "";
 
     md += frontMatter;
-    md += `# ${chapter.title}\n\n`;
 
     for (const section of chapter.sections) {
       md += `## ${section.title}\n\n`;
