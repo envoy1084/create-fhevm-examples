@@ -2,6 +2,9 @@ import "@fhevm/hardhat-plugin";
 
 import * as dotenv from "dotenv";
 import "@nomicfoundation/hardhat-toolbox";
+import "solidity-docgen";
+
+import type { HardhatUserConfig } from "hardhat/config";
 
 dotenv.config();
 
@@ -21,6 +24,10 @@ const accounts = process.env.MNEMONIC
 
 const config = {
   defaultNetwork: "hardhat",
+  docgen: {
+    outputDir: "docs/api",
+    pages: "files",
+  },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY ?? "",
   },
@@ -79,6 +86,6 @@ const config = {
     outDir: "types",
     target: "ethers-v6",
   },
-};
+} satisfies HardhatUserConfig;
 
 export default config;
