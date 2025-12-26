@@ -96,4 +96,47 @@ contract EncryptedArithmetic is ZamaEthereumConfig {
         FHE.allowThis(value);
         FHE.allow(value, msg.sender);
     }
+
+    /**
+     * @notice Modulo the current value by a divisor
+     * @param divisor The divisor
+     */
+    function rem(uint32 divisor) external {
+        value = FHE.rem(value, divisor);
+
+        FHE.allowThis(value);
+        FHE.allow(value, msg.sender);
+    }
+
+    /**
+     * @notice Find the minimum of two encrypted values
+     * @param inputEuint32 Encrypted uint32 input
+     * @param inputProof Proof that the encrypted value is well-formed
+     * @dev This example omits overflow/underflow checks for simplicity and readability.
+     * In a production contract, proper range checks should be implemented.
+     */
+    function min(externalEuint32 inputEuint32, bytes calldata inputProof) external {
+        euint32 encryptedEuint32 = FHE.fromExternal(inputEuint32, inputProof);
+
+        value = FHE.min(value, encryptedEuint32);
+
+        FHE.allowThis(value);
+        FHE.allow(value, msg.sender);
+    }
+
+    /**
+     * @notice Find the maximum of two encrypted values
+     * @param inputEuint32 Encrypted uint32 input
+     * @param inputProof Proof that the encrypted value is well-formed
+     * @dev This example omits overflow/underflow checks for simplicity and readability.
+     * In a production contract, proper range checks should be implemented.
+     */
+    function max(externalEuint32 inputEuint32, bytes calldata inputProof) external {
+        euint32 encryptedEuint32 = FHE.fromExternal(inputEuint32, inputProof);
+
+        value = FHE.max(value, encryptedEuint32);
+
+        FHE.allowThis(value);
+        FHE.allow(value, msg.sender);
+    }
 }

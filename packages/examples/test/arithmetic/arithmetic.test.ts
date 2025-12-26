@@ -10,13 +10,16 @@ import type { EncryptedArithmetic } from "@/types";
 ///
 /// # Introduction
 /// The power of FHE lies in its ability to perform math on data while it remains encrypted.
-/// This guide covers the four basic arithmetic operations: Addition, Subtraction, Multiplication, and Division.
+/// This guide covers the four basic arithmetic operations: Addition, Subtraction, Multiplication, Division, Remainder, and Minimum/Maximum.
 ///
 /// We will verify that:
 /// * $Enc(a) + Enc(b) = Enc(a + b)$
 /// * $Enc(a) - Enc(b) = Enc(a - b)$
 /// * $Enc(a) * Enc(b) = Enc(a * b)$
 /// * $Enc(a) / b = Enc(a / b)$ (Scalar Division)
+/// * $Enc(a) % b = Enc(a % b)$ (Remainder)
+/// * $Enc(a) < Enc(b)$ if $a < b$
+/// * $Enc(a) > Enc(b)$ if $a > b$
 
 type Signers = {
   deployer: HardhatEthersSigner;
@@ -60,10 +63,10 @@ describe("EncryptedArithmetic", () => {
   });
 
   // Helper to initialize the encrypted counter
-  const set = async (value: bigint) => {
+  const set = async (value: bigint | number) => {
     const encryptedValue = await fhevm
       .createEncryptedInput(address, signers.alice.address)
-      .add32(value)
+      .add32(BigInt(value))
       .encrypt();
 
     await contract
@@ -225,5 +228,118 @@ describe("EncryptedArithmetic", () => {
 
     expect(clearValueAfterDiv).to.eq(clear10 / clear2);
     // @end: division
+  });
+
+  /// @section: "Remainder (Modulo)"
+  /// Just like division, the Remainder operation is typically performed against a **public scalar**
+  /// to be computationally efficient.
+  ///
+  /// This is commonly used in blockchain logic for:
+  /// * **Vesting Schedules:** Calculating `time % period`.
+  /// * **Lotteries:** Determining a winner from a random number.
+  ///
+  /// In this example, we calculate $Enc(10) \% 3$.
+
+  it("should perform remainder operation", async () => {
+    // Set state to 10
+    const clear10 = 10n;
+    await set(clear10);
+
+    // @start: remainder
+    // The modulus is Public (Cleartext)
+    const clear3 = 3n;
+
+    // We pass the raw bigint directly
+    const tx = await contract.connect(signers.alice).rem(clear3);
+    await tx.wait();
+
+    // Verify: 10 % 3 = 1
+    const encValueAfterRem = await contract.get();
+    const clearValueAfterRem = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      encValueAfterRem,
+      address,
+      signers.alice,
+    );
+
+    expect(clearValueAfterRem).to.eq(clear10 % clear3);
+    // @end: remainder
+  });
+
+  /// @section: "Comparisons (Min/Max)"
+  /// FHEVM allows for homomorphic comparisons. You can determine the smaller or larger of two
+  /// **encrypted** numbers without ever revealing what those numbers are.
+  ///
+  /// This is incredibly powerful for financial privacy, such as:
+  /// * **Capping Withdrawals:** `min(requested_amount, daily_limit)`
+  /// * **Flooring Collateral:** `max(user_collateral, liquidation_threshold)`
+  ///
+  /// Below, we compute the minimum of the encrypted state (10) and a new encrypted input (3).
+
+  it("should perform minimum operation", async () => {
+    const clear10 = 10;
+    await set(clear10);
+
+    // @start: minimum
+    const clear3 = 3;
+
+    // 1. Encrypt the comparison value
+    const encrypted3 = await fhevm
+      .createEncryptedInput(address, signers.alice.address)
+      .add32(clear3)
+      .encrypt();
+
+    // 2. Compute Min(State, Input)
+    const tx = await contract
+      .connect(signers.alice)
+      .min(encrypted3.handles[0], encrypted3.inputProof);
+    await tx.wait();
+
+    // Verify: min(10, 3) = 3
+    const encValueAfterMin = await contract.get();
+    const clearValueAfterMin = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      encValueAfterMin,
+      address,
+      signers.alice,
+    );
+
+    expect(clearValueAfterMin).to.eq(Math.min(clear10, clear3));
+    // @end: minimum
+  });
+
+  /// The Maximum operation works identically. Here we verify that the state updates
+  /// to the larger of the two values.
+
+  it("should perform maximum operation", async () => {
+    const clear10 = 10;
+    await set(clear10);
+
+    // @start: maximum
+    const clear11 = 11;
+
+    // Encrypt the comparison value
+    const encrypted11 = await fhevm
+      .createEncryptedInput(address, signers.alice.address)
+      .add32(clear11)
+      .encrypt();
+
+    // Compute Max(State, Input)
+    const tx = await contract
+      .connect(signers.alice)
+      .max(encrypted11.handles[0], encrypted11.inputProof);
+    await tx.wait();
+
+    // Verify: max(10, 11) = 11
+    const encValueAfterMax = await contract.get();
+    const clearValueAfterMax = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      encValueAfterMax,
+      address,
+      signers.alice,
+    );
+
+    expect(clearValueAfterMax).to.eq(Math.max(clear10, clear11));
+    // @end: maximum
   });
 });
