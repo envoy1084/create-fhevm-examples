@@ -1,3 +1,4 @@
+import { execa } from "execa";
 import { simpleGit } from "simple-git";
 
 type InitializeGitOptions = {
@@ -5,6 +6,12 @@ type InitializeGitOptions = {
 };
 
 export const initializeGit = async ({ targetDir }: InitializeGitOptions) => {
+  try {
+    await execa("git", ["--version"]);
+  } catch (_: unknown) {
+    throw new Error("Git is not installed. Please install it and try again.");
+  }
+
   const git = simpleGit({
     baseDir: targetDir,
     binary: "git",

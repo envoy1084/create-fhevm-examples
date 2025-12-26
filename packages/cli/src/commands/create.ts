@@ -1,4 +1,5 @@
 import * as prompt from "@clack/prompts";
+import boxen from "boxen";
 import kleur from "kleur";
 
 import {
@@ -11,7 +12,7 @@ import {
   validatePmExists,
 } from "../helpers/index.js";
 import { getArguments, type PromptAnswers } from "../prompts/index.js";
-import { generateDocs } from "./docgen.ts";
+import { generateDocs } from "./docgen.js";
 
 export async function createProject() {
   const args = await getArguments();
@@ -33,13 +34,10 @@ export async function createProject() {
 
   // Install dependencies if enabled
   if (args.install) {
-    const s = prompt.spinner();
-    s.start("Installing dependencies...");
     await installDependencies({
       packageManager: args.packageManager,
       targetDir,
     });
-    s.stop("Dependencies installed");
 
     await generateDocs(targetDir);
   }
@@ -52,16 +50,21 @@ export async function createProject() {
     s.stop("Git initialized");
   }
 
-  prompt.outro(getNextSteps(args));
+  prompt.outro(
+    boxen(getNextSteps(args), { margin: { left: 2, top: 1 }, padding: 1 }),
+  );
 }
 
 const getNextSteps = (args: PromptAnswers) => {
-  return `✅ Your project is ready! Here are some next steps:
+  return `✅ Successfully created a new FHEVM project!
 
-1. Navigate using ${kleur.bold(`cd ${args.directory}`)}
-2. Install dependencies with ${kleur.bold(`${args.packageManager} install`)}
-3. Run ${kleur.bold(`${args.packageManager} docgen`)} to generate documentation
-4. Run ${kleur.bold(`${args.packageManager} test`)} to run tests
-5. Happy hacking! 🔥
+Navigate into directory using:
+  ${kleur.bold(`cd ${args.directory}`)}
+
+Inside that directory, you can run various commands:
+  ${kleur.bold("pnpm test")}    Run the test suite
+  ${kleur.bold("pnpm docgen")}  Generate documentation
+
+Happy hacking! 🔥
 `;
 };

@@ -56,7 +56,7 @@ export const getArguments = async (): Promise<PromptAnswers> => {
           maxItems: 5,
           message: "What example do you want to use?",
           options: examples.map((v) => ({
-            hint: v.package.description,
+            hint: v.description,
             label: v.label,
             value: v.value,
           })),

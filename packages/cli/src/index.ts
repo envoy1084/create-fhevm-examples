@@ -4,6 +4,7 @@ import kleur from "kleur";
 import packageJson from "../package.json" with { type: "json" };
 import { createProject } from "./commands/create.js";
 import { generateDocs } from "./commands/docgen.js";
+import { listExamples } from "./commands/list.js";
 
 const program = new Command();
 
@@ -23,6 +24,13 @@ program
   .description("Generate Markdown documentation for this CLI")
   .action(async () => {
     await generateDocs(process.cwd());
+  });
+
+program
+  .command("list")
+  .description("List All Available Examples for FHEVM")
+  .action(async () => {
+    await listExamples();
   });
 
 await program.parseAsync();

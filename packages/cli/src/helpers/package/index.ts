@@ -39,7 +39,6 @@ export const updatePackageJson = async (
 ) => {
   const packageJsonPath = path.join(targetDir, "package.json");
 
-  // check file exists
   if (!fs.existsSync(packageJsonPath)) {
     throw new Error(`package.json not found in ${targetDir}`);
   }

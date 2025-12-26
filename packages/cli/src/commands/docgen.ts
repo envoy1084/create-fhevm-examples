@@ -7,11 +7,8 @@ import {
 
 export const generateDocs = async (rootDir: string) => {
   const s = prompt.spinner();
-  s.start("Generating Solidity API Reference...");
+  s.start("Generating Documentation...");
   await generateSolidityDocs(rootDir);
-  s.stop("Solidity API reference generated");
-
-  s.start("Generating Tests Documentation...");
   await generateTestDocs(rootDir);
-  s.stop("Tests documentation generated");
+  s.stop("Documentation generated");
 };

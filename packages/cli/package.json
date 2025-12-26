@@ -5,6 +5,7 @@
   },
   "dependencies": {
     "@clack/prompts": "1.0.0-alpha.8",
+    "boxen": "^8.0.1",
     "commander": "^14.0.2",
     "debug": "^4.4.3",
     "execa": "^9.6.1",

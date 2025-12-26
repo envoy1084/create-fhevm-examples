@@ -1,14 +1,18 @@
 import type { PackageJson } from "type-fest";
-
+export type Difficulty = "beginner" | "intermediate" | "advanced";
 export type Example = {
+  description: string;
   label: string;
   packageJson: PackageJson;
+  difficulty: Difficulty;
   path: string;
   value: string;
 };
 
 export const examples: Example[] = [
   {
+    description: "A simple FHEVM counter contract",
+    difficulty: "beginner",
     label: "Counter",
     packageJson: {
       description: "A simple counter contract",
