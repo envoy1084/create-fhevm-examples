@@ -1,3 +1,7 @@
+---
+title: false
+---
+
 # Encrypted Arithmetic
 
 ## Overview
@@ -29,6 +33,7 @@ if (!fhevm.isMock) {
 }
 ({ contract, address } = await deployFixture());
 ```
+
 ---
 
 ## Addition
@@ -65,6 +70,7 @@ const clearValueAfterAdd = await fhevm.userDecryptEuint(
 
 expect(clearValueAfterAdd).to.eq(clear10);
 ```
+
 ---
 
 ## Subtraction
@@ -95,6 +101,7 @@ const clearValueAfterSub = await fhevm.userDecryptEuint(
 
 expect(clearValueAfterSub).to.eq(clear10 - clear5);
 ```
+
 ---
 
 ## Multiplication
@@ -114,6 +121,7 @@ const tx = await contract
   .mul(encrypted3.handles[0], encrypted3.inputProof);
 await tx.wait();
 ```
+
 ---
 
 ## Division (Scalar)
@@ -149,6 +157,7 @@ const clearValueAfterDiv = await fhevm.userDecryptEuint(
 
 expect(clearValueAfterDiv).to.eq(clear10 / clear2);
 ```
+
 ---
 
 ## Remainder (Modulo)
@@ -181,6 +190,7 @@ const clearValueAfterRem = await fhevm.userDecryptEuint(
 
 expect(clearValueAfterRem).to.eq(clear10 % clear3);
 ```
+
 ---
 
 ## Comparisons (Min/Max)
@@ -220,6 +230,7 @@ const clearValueAfterMin = await fhevm.userDecryptEuint(
 
 expect(clearValueAfterMin).to.eq(Math.min(clear10, clear3));
 ```
+
 The Maximum operation works identically. Here we verify that the state updates
 to the larger of the two values.
 
@@ -249,5 +260,6 @@ const clearValueAfterMax = await fhevm.userDecryptEuint(
 
 expect(clearValueAfterMax).to.eq(Math.max(clear10, clear11));
 ```
+
 ---
 

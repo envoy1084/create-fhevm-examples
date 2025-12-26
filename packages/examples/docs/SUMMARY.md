@@ -4,9 +4,12 @@
 
 ## API Reference
 
+* [Arithmetic](api/beginner/arithmetic/Arithmetic.md)
+* [Bitwise](api/beginner/bitwise/Bitwise.md)
+* [Counter](api/beginner/counter/Counter.md)
 
 ## Guides
 
 * [Encrypted Counter](chapters/encrypted-counter.md)
 * [Encrypted Arithmetic](chapters/encrypted-arithmetic.md)
-* [Bitwise Logic](chapters/bitwise-operations.md)
+* [Bitwise Operations](chapters/bitwise-operations.md)

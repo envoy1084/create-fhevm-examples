@@ -26,9 +26,9 @@ export class MarkdownRenderer {
     if (fs.existsSync(apiDir)) {
       summaryContent += "\n## API Reference\n\n";
 
-      const apiFiles = await glob("*.md", {
+      const apiFiles = await glob("**/*.md", {
         cwd: apiDir,
-        ignore: ["README.md", "SUMMARY.md"], // Ignore index files if they exist
+        ignore: ["**/README.md", "**/SUMMARY.md", "**/index.md"],
       });
 
       apiFiles.sort();
@@ -65,7 +65,11 @@ export class MarkdownRenderer {
   }
 
   private generateChapterContent(chapter: DocChapter): string {
-    let md = `# ${chapter.title}\n\n`;
+    const frontMatter = `---\ntitle: false\n---\n\n`;
+    let md = "";
+
+    md += frontMatter;
+    md += `# ${chapter.title}\n\n`;
 
     for (const section of chapter.sections) {
       md += `## ${section.title}\n\n`;
@@ -76,10 +80,7 @@ export class MarkdownRenderer {
         } else if (block.type === "code") {
           md += `\`\`\`${block.language}\n`;
           md += `${block.content}\n`;
-          md += `\`\`\`\n`;
-
-          // Optional: Add footer for source context
-          // md += `_Source: [${path.basename(block.sourceFile)}](${this.getFileLink(block.sourceFile)})_\n\n`;
+          md += `\`\`\`\n\n`;
         }
       }
 

@@ -59,7 +59,7 @@ export class DocParser {
 
     // --- Parser State ---
     let currentChapterId: string | null = null;
-    let currentSectionTitle = "Overview"; // Default section if none specified
+    let currentSectionTitle = "Overview"; // Default section if none specified (e.g. @section: "Overview")
 
     // We capture code lines in a buffer until we hit "@end"
     let isCapturingCode = false;

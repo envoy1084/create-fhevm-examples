@@ -1,9 +1,12 @@
-# Bitwise Logic
+---
+title: false
+---
+
+# Bitwise Operations
 
 ## Overview
 
 
-# Bitwise Operations
 Beyond simple arithmetic, FHEVM supports low-level bitwise manipulation of encrypted data.
 This allows you to implement logic gates, flags, and complex cryptographic primitives (like hashing algorithms)
 entirely on-chain without decrypting the data.
@@ -12,8 +15,6 @@ Supported operations include:
 * **Logic:** AND (`&`), OR (`|`), XOR (`^`), NOT (`~`)
 * **Shifts:** Left (`<<`), Right (`>>`)
 * **Rotations:** Rotate Left (`rotl`), Rotate Right (`rotr`)
-
-
 
 ---
 
@@ -28,6 +29,7 @@ if (!fhevm.isMock) {
 }
 ({ contract, address } = await deployFixture());
 ```
+
 ---
 
 ## Logical Operators (AND, OR, XOR)
@@ -64,6 +66,7 @@ const clearValueAfterAnd = await fhevm.userDecryptEuint(
 
 expect(clearValueAfterAnd).to.eq(clear10 & clear3);
 ```
+
 ```typescript
 const clear3 = 3n; // binary 0011
 
@@ -90,6 +93,7 @@ const clearValueAfterOr = await fhevm.userDecryptEuint(
 
 expect(clearValueAfterOr).to.eq(clear10 | clear3);
 ```
+
 ```typescript
 const clear3 = 3n; // binary 0011
 
@@ -116,6 +120,7 @@ const clearValueAfterXor = await fhevm.userDecryptEuint(
 
 expect(clearValueAfterXor).to.eq(clear10 ^ clear3);
 ```
+
 ---
 
 ## Bitwise NOT
@@ -140,6 +145,7 @@ const clearValueAfterNot = await fhevm.userDecryptEuint(
 // Use zero-fill right shift to force unsigned 32-bit interpretation in JS
 expect(clearValueAfterNot).to.eq(~clear >>> 0);
 ```
+
 ---
 
 ## Shifts (Left/Right)
@@ -180,6 +186,7 @@ const clearValueAfterShl = await fhevm.userDecryptEuint(
 
 expect(clearValueAfterShl).to.eq(clear10 << clear3);
 ```
+
 ```typescript
 const clear3 = 3;
 
@@ -206,6 +213,7 @@ const clearValueAfterShr = await fhevm.userDecryptEuint(
 
 expect(clearValueAfterShr).to.eq(clear10 >> clear3);
 ```
+
 ---
 
 ## Rotations
@@ -241,6 +249,7 @@ const clearResult = await fhevm.userDecryptEuint(
 const expected = rotl32(clearValue, rotateBy);
 expect(clearResult).to.eq(expected);
 ```
+
 ```typescript
 const rotateBy = 3;
 
@@ -267,5 +276,6 @@ const clearResult = await fhevm.userDecryptEuint(
 const expected = rotr32(clearValue, rotateBy);
 expect(clearResult).to.eq(expected);
 ```
+
 ---
 

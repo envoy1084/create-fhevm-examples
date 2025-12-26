@@ -1,3 +1,7 @@
+---
+title: false
+---
+
 # Encrypted Counter
 
 ## Overview
@@ -27,6 +31,7 @@ if (!fhevm.isMock) {
   this.skip();
 }
 ```
+
 ---
 
 ## Initial State
@@ -43,6 +48,7 @@ const encryptedCount = await fheCounterContract.getCount();
 // Expect initial count to be bytes32(0)
 expect(encryptedCount).to.eq(ethers.ZeroHash);
 ```
+
 ---
 
 ## The Encryption Lifecycle
@@ -63,6 +69,7 @@ const encryptedOne = await fhevm
   .add32(clearOne)
   .encrypt();
 ```
+
 ### Step 2: Execute Transaction
 We pass two things to the contract:
 * `handles[0]`: A reference to the encrypted value.
@@ -74,6 +81,7 @@ const tx = await fheCounterContract
   .increment(encryptedOne.handles[0], encryptedOne.inputProof);
 await tx.wait();
 ```
+
 ### Step 3: Decryption
 The contract state has changed, but it is still encrypted! To read it, we must **re-encrypt** the result
 with a key that Alice controls.
@@ -95,6 +103,7 @@ const clearCountAfterInc = await fhevm.userDecryptEuint(
 
 expect(clearCountAfterInc).to.eq(clearCountBeforeInc + clearOne);
 ```
+
 ---
 
 ## Complex Operations
@@ -132,5 +141,6 @@ const result = await fhevm.userDecryptEuint(
 
 expect(result).to.eq(0);
 ```
+
 ---
 

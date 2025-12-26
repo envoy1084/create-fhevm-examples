@@ -2,7 +2,8 @@
   "author": "Vedant Chainani <vedant@envoy1084.xyz>",
   "dependencies": {
     "@fhevm/solidity": "^0.9.1",
-    "encrypted-types": "^0.0.4"
+    "encrypted-types": "^0.0.4",
+    "solidity-docgen": "0.6.0-beta.36"
   },
   "description": "",
   "devDependencies": {

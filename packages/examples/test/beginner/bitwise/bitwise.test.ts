@@ -5,10 +5,9 @@ import { ethers, fhevm } from "hardhat";
 
 import type { BitwiseOperations } from "@/types";
 
-/// @chapter: bitwise-operations "Bitwise Logic"
+/// @chapter: bitwise-operations "Bitwise Operations"
 /// @priority: 3
 ///
-/// # Bitwise Operations
 /// Beyond simple arithmetic, FHEVM supports low-level bitwise manipulation of encrypted data.
 /// This allows you to implement logic gates, flags, and complex cryptographic primitives (like hashing algorithms)
 /// entirely on-chain without decrypting the data.
@@ -17,8 +16,6 @@ import type { BitwiseOperations } from "@/types";
 /// * **Logic:** AND (`&`), OR (`|`), XOR (`^`), NOT (`~`)
 /// * **Shifts:** Left (`<<`), Right (`>>`)
 /// * **Rotations:** Rotate Left (`rotl`), Rotate Right (`rotr`)
-///
-///
 
 type Signers = {
   deployer: HardhatEthersSigner;
