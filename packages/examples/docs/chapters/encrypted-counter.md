@@ -5,7 +5,6 @@ title: Encrypted Counter
 ## Overview
 
 
-# Introduction
 This guide demonstrates the fundamental lifecycle of a Fully Homomorphic Encryption (FHE) application.
 unlike standard blockchains where state is public, FHEVM contracts operate on **encrypted data**.
 

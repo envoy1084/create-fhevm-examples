@@ -21,6 +21,21 @@ export class MarkdownRenderer {
 
     let summaryContent = "# Table of Contents\n\n* [Introduction](README.md)\n";
 
+    if (chapters.length > 0) {
+      summaryContent += "\n## Guides\n\n";
+    }
+
+    for (const chapter of chapters) {
+      const fileName = `${chapter.id}.md`;
+      const fullPath = path.join(this.config.outDir, fileName);
+
+      const content = this.generateChapterContent(chapter);
+      fs.writeFileSync(fullPath, content);
+
+      summaryContent += `* [${chapter.title}](chapters/${fileName})\n`;
+      docgenLogger(`[DocGen] Generated Guide: %s`, fileName);
+    }
+
     const apiDir = path.resolve(this.config.rootDir, "docs/api");
 
     if (fs.existsSync(apiDir)) {
@@ -43,21 +58,6 @@ export class MarkdownRenderer {
         const contractName = path.basename(file, ".md");
         summaryContent += `* [${contractName}](api/${file})\n`;
       }
-    }
-
-    if (chapters.length > 0) {
-      summaryContent += "\n## Guides\n\n";
-    }
-
-    for (const chapter of chapters) {
-      const fileName = `${chapter.id}.md`;
-      const fullPath = path.join(this.config.outDir, fileName);
-
-      const content = this.generateChapterContent(chapter);
-      fs.writeFileSync(fullPath, content);
-
-      summaryContent += `* [${chapter.title}](chapters/${fileName})\n`;
-      docgenLogger(`[DocGen] Generated Guide: %s`, fileName);
     }
 
     fs.writeFileSync(this.config.summaryFile, summaryContent);

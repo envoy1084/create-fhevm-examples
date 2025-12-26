@@ -4,9 +4,8 @@
 
 Demonstrates basic encrypted arithmetic using FHEVM
 
-@dev
-This contract stores an encrypted uint and allows
-arithmetic operations without revealing the value.
+_This contract stores an encrypted uint and allows
+arithmetic operations without revealing the value._
 
 ### get
 

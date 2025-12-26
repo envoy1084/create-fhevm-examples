@@ -30,7 +30,7 @@ if (!fhevm.isMock) {
 
 ---
 
-## Logical Operators (AND, OR, XOR)
+## Logical Operators
 
 These operators work exactly as they do in standard programming, but on encrypted bits.
 

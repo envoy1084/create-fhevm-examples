@@ -5,7 +5,6 @@ title: Encrypted Arithmetic
 ## Overview
 
 
-# Introduction
 The power of FHE lies in its ability to perform math on data while it remains encrypted.
 This guide covers the four basic arithmetic operations: Addition, Subtraction, Multiplication, Division, Remainder, and Minimum/Maximum.
 

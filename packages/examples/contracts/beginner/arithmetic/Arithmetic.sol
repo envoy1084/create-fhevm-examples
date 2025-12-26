@@ -8,8 +8,7 @@ import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
  * @title EncryptedArithmetic
  * @notice Demonstrates basic encrypted arithmetic using FHEVM
  *
- * @dev
- * This contract stores an encrypted uint and allows
+ * @dev This contract stores an encrypted uint and allows
  * arithmetic operations without revealing the value.
  */
 contract EncryptedArithmetic is ZamaEthereumConfig {

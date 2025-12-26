@@ -75,7 +75,7 @@ describe("Bitwise Operations", () => {
     expect(encValue).to.eq(ethers.ZeroHash);
   });
 
-  /// @section: "Logical Operators (AND, OR, XOR)"
+  /// @section: "Logical Operators"
   /// These operators work exactly as they do in standard programming, but on encrypted bits.
   ///
   /// * **AND (`&`):** Used for masking bits (e.g., extracting specific flags).

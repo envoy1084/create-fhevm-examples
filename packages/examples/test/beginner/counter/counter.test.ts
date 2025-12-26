@@ -8,7 +8,6 @@ import type { FHECounter, FHECounter__factory } from "@/types";
 /// @chapter: encrypted-counter "Encrypted Counter"
 /// @priority: 1
 ///
-/// # Introduction
 /// This guide demonstrates the fundamental lifecycle of a Fully Homomorphic Encryption (FHE) application.
 /// unlike standard blockchains where state is public, FHEVM contracts operate on **encrypted data**.
 ///

@@ -8,7 +8,6 @@ import type { EncryptedArithmetic } from "@/types";
 /// @chapter: encrypted-arithmetic "Encrypted Arithmetic"
 /// @priority: 2
 ///
-/// # Introduction
 /// The power of FHE lies in its ability to perform math on data while it remains encrypted.
 /// This guide covers the four basic arithmetic operations: Addition, Subtraction, Multiplication, Division, Remainder, and Minimum/Maximum.
 ///
