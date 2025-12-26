@@ -151,6 +151,9 @@ importers:
       chai:
         specifier: ^5.3.1
         version: 5.3.3
+      chai-as-promised:
+        specifier: ^8.0.2
+        version: 8.0.2(chai@5.3.3)
       cross-env:
         specifier: ^10.1.0
         version: 10.1.0
@@ -188,6 +191,9 @@ importers:
       '@types/chai':
         specifier: ^5.2.3
         version: 5.2.3
+      '@types/chai-as-promised':
+        specifier: ^8.0.2
+        version: 8.0.2
       '@types/node':
         specifier: ^24.10.4
         version: 24.10.4
@@ -197,6 +203,9 @@ importers:
       chai:
         specifier: ^5.3.1
         version: 5.3.3
+      chai-as-promised:
+        specifier: ^8.0.2
+        version: 8.0.2(chai@5.3.3)
       cross-env:
         specifier: ^10.1.0
         version: 10.1.0
@@ -1151,6 +1160,9 @@ packages:
   '@types/chai-as-promised@7.1.8':
     resolution: {integrity: sha512-ThlRVIJhr69FLlh6IctTXFkmhtP3NpMZ2QGq69StYLyKZFp/HOp1VdKZj7RvfNWYYcJ1xlbLGLLWj1UvP5u/Gw==}
 
+  '@types/chai-as-promised@8.0.2':
+    resolution: {integrity: sha512-meQ1wDr1K5KRCSvG2lX7n7/5wf70BeptTKst0axGvnN6zqaVpRqegoIbugiAPSqOW9K9aL8gDVrm7a2LXOtn2Q==}
+
   '@types/chai@5.2.3':
     resolution: {integrity: sha512-Mw558oeA9fFbv65/y4mHtXDs9bPnFMZAL/jxdPFUpOHHIXX91mcgEHbS5Lahr+pwZFR8A7GQleRWeI6cGFC2UA==}
 
@@ -1543,6 +1555,11 @@ packages:
     resolution: {integrity: sha512-aBDHZxRzYnUYuIAIPBH2s511DjlKPzXNlXSGFC8CwmroWQLfrW0LtE1nK3MAwwNhJPa9raEjNCmRoFpG0Hurdw==}
     peerDependencies:
       chai: '>= 2.1.2 < 6'
+
+  chai-as-promised@8.0.2:
+    resolution: {integrity: sha512-1GadL+sEJVLzDjcawPM4kjfnL+p/9vrxiEUonowKOAzvVg0PixJUdtuDzdkDeQhK3zfOE76GqGkZIQ7/Adcrqw==}
+    peerDependencies:
+      chai: '>= 2.1.2 < 7'
 
   chai@5.3.3:
     resolution: {integrity: sha512-4zNhdJD/iOjSH0A05ea+Ke6MU5mmpQcbQsSOkgdaUMJ9zTlDTD/GYlwohmIE2u0gaxHYiVHEn1Fw9mZ/ktJWgw==}
@@ -5103,6 +5120,10 @@ snapshots:
     dependencies:
       '@types/chai': 5.2.3
 
+  '@types/chai-as-promised@8.0.2':
+    dependencies:
+      '@types/chai': 5.2.3
+
   '@types/chai@5.2.3':
     dependencies:
       '@types/deep-eql': 4.0.2
@@ -5504,6 +5525,11 @@ snapshots:
     dependencies:
       chai: 5.3.3
       check-error: 1.0.3
+
+  chai-as-promised@8.0.2(chai@5.3.3):
+    dependencies:
+      chai: 5.3.3
+      check-error: 2.1.1
 
   chai@5.3.3:
     dependencies:

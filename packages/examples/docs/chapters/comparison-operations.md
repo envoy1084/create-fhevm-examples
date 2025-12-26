@@ -4,6 +4,7 @@ title: Comparison Logic
 
 ## Overview
 
+
 FHEVM allows you to compare two encrypted numbers (or an encrypted number and a clear number).
 
 **Crucial Concept: Encrypted Booleans (`ebool`)**
