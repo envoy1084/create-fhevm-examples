@@ -5,7 +5,6 @@ title: Access Control (ACL)
 ## Overview
 
 
-# Controlling Data Visibility
 In FHEVM, simply "holding" the encrypted data (the hash handle) does not mean you can read it.
 To decrypt a value, the user must:
 1. Request a **Re-encryption** from the network.
