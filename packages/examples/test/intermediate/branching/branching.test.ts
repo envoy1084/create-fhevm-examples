@@ -143,4 +143,4 @@ describe("Branching Logic", () => {
 });
 
 /// @include: "Branching.sol" { "group": "branching", "tabTitle": "Branching.sol" }
-/// @include: "branching.test.ts" { "group": "branching-test", "tabTitle": "branching.test.ts", "strip": true }
+/// @include: "branching.test.ts" { "group": "branching", "tabTitle": "branching.test.ts", "strip": true }

@@ -81,7 +81,6 @@ export class MarkdownRenderer {
           md += `${block.content}\n`;
           md += `\`\`\`\n\n`;
         } else if (block.type === "tabs") {
-          // GitBook Tabs Syntax
           md += `{% tabs %}\n`;
 
           for (const tab of block.tabs) {

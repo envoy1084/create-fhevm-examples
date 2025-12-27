@@ -128,9 +128,6 @@ contract Branching is ZamaEthereumConfig {
 }
 ```
 {% endtab %}
-{% endtabs %}
-
-{% tabs %}
 {% tab title="branching.test.ts" %}
 ```typescript
 import { FhevmType } from "@fhevm/hardhat-plugin";

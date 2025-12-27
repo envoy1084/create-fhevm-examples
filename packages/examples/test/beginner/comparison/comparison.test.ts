@@ -251,3 +251,6 @@ describe("Comparison Operations", () => {
     // @end: less-than-equal
   });
 });
+
+/// @include: "Comparison.sol" { "group": "comparison", "tabTitle": "Comparison.sol" }
+/// @include: "comparison.test.ts" { "group": "comparison", "tabTitle": "comparison.test.ts", "strip": true }

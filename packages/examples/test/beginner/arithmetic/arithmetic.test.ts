@@ -342,3 +342,6 @@ describe("EncryptedArithmetic", () => {
     // @end: maximum
   });
 });
+
+/// @include: "Arithmetic.sol" { "group": "arithmetic", "tabTitle": "Arithmetic.sol" }
+/// @include: "arithmetic.test.ts" { "group": "arithmetic", "tabTitle": "arithmetic.test.ts", "strip": true }

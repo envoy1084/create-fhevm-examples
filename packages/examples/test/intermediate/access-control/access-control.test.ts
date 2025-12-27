@@ -220,3 +220,6 @@ describe("Access Control", () => {
     expect(clearValue).to.eq(10);
   });
 });
+
+/// @include: "AccessControl.sol" { "group": "access-control", "tabTitle": "AccessControl.sol" }
+/// @include: "access-control.test.ts" { "group": "access-control", "tabTitle": "access-control.test.ts", "strip": true }

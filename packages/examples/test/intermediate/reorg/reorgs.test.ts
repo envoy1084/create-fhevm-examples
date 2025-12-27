@@ -178,3 +178,6 @@ describe("Reorg Protection", () => {
     expect(pk).to.eq(privateKey);
   });
 });
+
+/// @include: "Reorgs.sol" { "group": "reorgs", "tabTitle": "Reorgs.sol" }
+/// @include: "reorgs.test.ts" { "group": "reorgs", "tabTitle": "reorgs.test.ts", "strip": true }

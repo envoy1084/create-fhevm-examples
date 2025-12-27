@@ -150,5 +150,217 @@ const tx = await contract
 await tx.wait();
 ```
 
+{% tabs %}
+{% tab title="AccessControl.sol" %}
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+import {FHE, euint32, externalEuint32} from "@fhevm/solidity/lib/FHE.sol";
+import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
+
+contract AccessControl is ZamaEthereumConfig {
+    using FHE for euint32;
+
+    AccessControlB public contractB;
+    euint32 public value;
+
+    constructor(address _contractB) {
+        contractB = AccessControlB(_contractB);
+    }
+
+    function setWithContractACL(externalEuint32 inputEuint32, bytes calldata inputProof) external {
+        euint32 encryptedValue = FHE.fromExternal(inputEuint32, inputProof);
+        value = encryptedValue;
+
+        FHE.allowThis(value);
+    }
+
+    function allowUser(address user) external {
+        FHE.allow(value, user);
+    }
+
+    function chainAllow(address user1, address user2) external {
+        value.allow(user1).allow(user2);
+    }
+
+    function passToAnotherFunction(externalEuint32 inputEuint32, bytes calldata inputProof) external {
+        euint32 encryptedValue = FHE.fromExternal(inputEuint32, inputProof);
+        FHE.allowTransient(encryptedValue, address(contractB));
+
+        value = contractB.double(encryptedValue);
+    }
+}
+
+contract AccessControlB is ZamaEthereumConfig {
+    function double(euint32 encryptedValue) public returns (euint32) {
+        euint32 val = FHE.add(encryptedValue, encryptedValue);
+        FHE.allow(val, msg.sender);
+        return val;
+    }
+}
+```
+{% endtab %}
+{% tab title="access-control.test.ts" %}
+```typescript
+import { FhevmType } from "@fhevm/hardhat-plugin";
+import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
+import chai from "chai";
+import chaiAsPromised from "chai-as-promised";
+import { ethers, fhevm } from "hardhat";
+
+chai.use(chaiAsPromised);
+const { expect } = chai;
+
+import type { AccessControl } from "@/types";
+
+
+type Signers = {
+  deployer: HardhatEthersSigner;
+  alice: HardhatEthersSigner;
+  bob: HardhatEthersSigner;
+};
+
+async function deployFixture() {
+  const factory2 = await ethers.getContractFactory("AccessControlB");
+  const contract2 = await factory2.deploy();
+  const address2 = await contract2.getAddress();
+
+  const factory = await ethers.getContractFactory("AccessControl");
+  const contract = await factory.deploy(address2);
+  const address = await contract.getAddress();
+
+  return { address, address2, contract, contract2 };
+}
+
+describe("Access Control", () => {
+  let signers: Signers;
+  let contract: AccessControl;
+  let address: string;
+
+  before(async () => {
+    const ethSigners: HardhatEthersSigner[] = await ethers.getSigners();
+    signers = {
+      alice: ethSigners[1],
+      bob: ethSigners[2],
+      deployer: ethSigners[0],
+    };
+  });
+
+
+  beforeEach(async function () {
+    if (!fhevm.isMock) {
+      console.warn(`This hardhat test suite cannot run on Sepolia Testnet`);
+      this.skip();
+    }
+    ({ contract, address } = await deployFixture());
+  });
+
+  const setWithContractACL = async (value: bigint | number) => {
+    const encryptedValue = await fhevm
+      .createEncryptedInput(address, signers.alice.address)
+      .add32(BigInt(value))
+      .encrypt();
+
+    const tx = await contract
+      .connect(signers.alice)
+      .setWithContractACL(encryptedValue.handles[0], encryptedValue.inputProof);
+
+    await tx.wait();
+  };
+
+
+  it("should not allow alice to read value", async () => {
+    await setWithContractACL(10);
+
+    const encryptedValue = await contract.value();
+
+    await expect(
+      fhevm.userDecryptEuint(
+        FhevmType.euint32,
+        encryptedValue,
+        address,
+        signers.alice,
+      ),
+    ).to.be.rejected;
+  });
+
+
+  it('should allow alice to read value after "allowUser"', async () => {
+    await setWithContractACL(10);
+
+    const encryptedValue = await contract.value();
+
+    await contract.connect(signers.alice).allowUser(signers.alice.address);
+
+    const clearValue = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      encryptedValue,
+      address,
+      signers.alice,
+    );
+
+    expect(clearValue).to.eq(10);
+  });
+
+
+  it('should allow alice and bob to read value after "chainAllow"', async () => {
+    await setWithContractACL(10);
+    const encryptedValue = await contract.value();
+
+    await contract
+      .connect(signers.alice)
+      .chainAllow(signers.alice.address, signers.bob.address);
+
+    await expect(
+      fhevm.userDecryptEuint(
+        FhevmType.euint32,
+        encryptedValue,
+        address,
+        signers.alice,
+      ),
+    ).to.eventually.equal(10);
+
+    const clearValueBob = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      encryptedValue,
+      address,
+      signers.bob,
+    );
+    expect(clearValueBob).to.eq(10);
+  });
+
+
+  it("should allow passing to contracts using allowTransient", async () => {
+    await setWithContractACL(10);
+
+    const clear5 = 5n;
+    const encrypted5 = await fhevm
+      .createEncryptedInput(address, signers.alice.address)
+      .add32(clear5)
+      .encrypt();
+
+    const tx = await contract
+      .connect(signers.alice)
+      .passToAnotherFunction(encrypted5.handles[0], encrypted5.inputProof);
+
+    await tx.wait();
+
+    await contract.connect(signers.alice).allowUser(signers.alice.address);
+    const encryptedValue = await contract.value();
+    const clearValue = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      encryptedValue,
+      address,
+      signers.alice,
+    );
+
+    expect(clearValue).to.eq(10);
+  });
+});
+```
+{% endtab %}
+{% endtabs %}
+
 ---
 

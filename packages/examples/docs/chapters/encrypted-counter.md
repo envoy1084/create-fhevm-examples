@@ -139,5 +139,177 @@ const result = await fhevm.userDecryptEuint(
 expect(result).to.eq(0);
 ```
 
+{% tabs %}
+{% tab title="Counter.sol" %}
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+import {FHE, euint32, externalEuint32} from "@fhevm/solidity/lib/FHE.sol";
+import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
+
+/// @title FHE Counter
+/// @notice A very basic example contract showing how to work with encrypted data using FHEVM.
+contract FHECounter is ZamaEthereumConfig {
+    euint32 private _count;
+
+    /// @notice Returns the current count
+    /// @return _count The current encrypted count
+    function getCount() external view returns (euint32) {
+        return _count;
+    }
+
+    /// @notice Increments the counter by a specified encrypted value.
+    /// @param inputEuint32 the encrypted input value
+    /// @param inputProof the input proof
+    /// @dev This example omits overflow/underflow checks for simplicity and readability.
+    /// In a production contract, proper range checks should be implemented.
+    function increment(externalEuint32 inputEuint32, bytes calldata inputProof) external {
+        euint32 encryptedEuint32 = FHE.fromExternal(inputEuint32, inputProof);
+
+        _count = FHE.add(_count, encryptedEuint32);
+
+        FHE.allowThis(_count);
+        FHE.allow(_count, msg.sender);
+    }
+
+    /// @notice Decrements the counter by a specified encrypted value.
+    /// @param inputEuint32 the encrypted input value
+    /// @param inputProof the input proof
+    /// @dev This example omits overflow/underflow checks for simplicity and readability.
+    /// In a production contract, proper range checks should be implemented.
+    function decrement(externalEuint32 inputEuint32, bytes calldata inputProof) external {
+        euint32 encryptedEuint32 = FHE.fromExternal(inputEuint32, inputProof);
+
+        _count = FHE.sub(_count, encryptedEuint32);
+
+        FHE.allowThis(_count);
+        FHE.allow(_count, msg.sender);
+    }
+}
+```
+{% endtab %}
+{% tab title="counter.test.ts" %}
+```typescript
+import { FhevmType } from "@fhevm/hardhat-plugin";
+import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
+import { expect } from "chai";
+import { ethers, fhevm } from "hardhat";
+
+import type { FHECounter, FHECounter__factory } from "@/types";
+
+
+type Signers = {
+  deployer: HardhatEthersSigner;
+  alice: HardhatEthersSigner;
+  bob: HardhatEthersSigner;
+};
+
+async function deployFixture() {
+  const factory = (await ethers.getContractFactory(
+    "FHECounter",
+  )) as FHECounter__factory;
+  const fheCounterContract = (await factory.deploy()) as FHECounter;
+  const fheCounterContractAddress = await fheCounterContract.getAddress();
+
+  return { fheCounterContract, fheCounterContractAddress };
+}
+
+describe("FHECounter", () => {
+  let signers: Signers;
+  let fheCounterContract: FHECounter;
+  let fheCounterContractAddress: string;
+
+  before(async () => {
+    const ethSigners: HardhatEthersSigner[] = await ethers.getSigners();
+    signers = {
+      alice: ethSigners[1],
+      bob: ethSigners[2],
+      deployer: ethSigners[0],
+    };
+  });
+
+
+  beforeEach(async function () {
+    if (!fhevm.isMock) {
+      console.warn(`This hardhat test suite cannot run on Sepolia Testnet`);
+      this.skip();
+    }
+
+    ({ fheCounterContract, fheCounterContractAddress } = await deployFixture());
+  });
+
+
+  it("encrypted count should be uninitialized after deployment", async () => {
+    const encryptedCount = await fheCounterContract.getCount();
+
+    expect(encryptedCount).to.eq(ethers.ZeroHash);
+  });
+
+
+  it("increment the counter by 1", async () => {
+    const encryptedCountBeforeInc = await fheCounterContract.getCount();
+    expect(encryptedCountBeforeInc).to.eq(ethers.ZeroHash);
+    const clearCountBeforeInc = 0;
+
+    const clearOne = 1;
+
+    const encryptedOne = await fhevm
+      .createEncryptedInput(fheCounterContractAddress, signers.alice.address)
+      .add32(clearOne)
+      .encrypt();
+
+
+    const tx = await fheCounterContract
+      .connect(signers.alice)
+      .increment(encryptedOne.handles[0], encryptedOne.inputProof);
+    await tx.wait();
+
+
+    const encryptedCountAfterInc = await fheCounterContract.getCount();
+
+    const clearCountAfterInc = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      encryptedCountAfterInc,
+      fheCounterContractAddress,
+      signers.alice,
+    );
+
+    expect(clearCountAfterInc).to.eq(clearCountBeforeInc + clearOne);
+  });
+
+
+  it("decrement the counter by 1", async () => {
+    const clearOne = 1;
+    const encryptedOne = await fhevm
+      .createEncryptedInput(fheCounterContractAddress, signers.alice.address)
+      .add32(clearOne)
+      .encrypt();
+
+    let tx = await fheCounterContract
+      .connect(signers.alice)
+      .increment(encryptedOne.handles[0], encryptedOne.inputProof);
+    await tx.wait();
+
+    tx = await fheCounterContract
+      .connect(signers.alice)
+      .decrement(encryptedOne.handles[0], encryptedOne.inputProof);
+    await tx.wait();
+
+    const encryptedCountAfterDec = await fheCounterContract.getCount();
+    const result = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      encryptedCountAfterDec,
+      fheCounterContractAddress,
+      signers.alice,
+    );
+
+    expect(result).to.eq(0);
+  });
+});
+```
+{% endtab %}
+{% endtabs %}
+
 ---
 

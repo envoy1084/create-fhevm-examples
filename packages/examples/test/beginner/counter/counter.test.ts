@@ -176,3 +176,6 @@ describe("FHECounter", () => {
     // @end: decrement-logic
   });
 });
+
+/// @include: "Counter.sol" { "group": "counter", "tabTitle": "Counter.sol" }
+/// @include: "counter.test.ts" { "group": "counter", "tabTitle": "counter.test.ts", "strip": true }

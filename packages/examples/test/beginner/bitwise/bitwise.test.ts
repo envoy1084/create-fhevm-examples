@@ -365,3 +365,6 @@ describe("Bitwise Operations", () => {
     // @end: rotate-right
   });
 });
+
+/// @include: "Bitwise.sol" { "group": "bitwise", "tabTitle": "Bitwise.sol" }
+/// @include: "bitwise.test.ts" { "group": "bitwise", "tabTitle": "bitwise.test.ts", "strip": true }
