@@ -1,12 +1,19 @@
 /** biome-ignore-all lint/complexity/noExcessiveCognitiveComplexity: safe */
+/** biome-ignore-all lint/style/noNonNullAssertion: safe */
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-import { glob } from "glob";
+import { glob, globSync } from "glob";
 
 import { docgenLogger } from "../logger.js";
 import { buildConfig, type DocgenConfig } from "./config.js";
-import type { DocChapter, DocSection } from "./types.js";
+import type { CodeBlock, DocChapter, DocSection, TabsBlock } from "./types.js";
+
+interface IncludeOptions {
+  strip?: boolean;
+  group?: string; // Group ID for tabs
+  tabTitle?: string; // Display name in the tab
+}
 
 export class DocParser {
   private chapters: Map<string, DocChapter> = new Map();
@@ -26,15 +33,7 @@ export class DocParser {
     docgenLogger(`[DocParser] Found %d files to scan.`, files.length);
 
     for (const filePath of files) {
-      try {
-        this.processFile(filePath);
-      } catch (err: unknown) {
-        docgenLogger(
-          `[DocParser] Error processing %s: %s`,
-          filePath,
-          (err as Error).message,
-        );
-      }
+      this.processFile(filePath);
     }
 
     return Array.from(this.chapters.values()).sort(
@@ -45,23 +44,11 @@ export class DocParser {
   private processFile(filePath: string): void {
     const content = fs.readFileSync(filePath, "utf-8");
     const lines = content.split("\n");
+    const language = this.getLanguageFromExtension(filePath);
 
-    // Auto-detect language
-    const ext = path.extname(filePath).replace(".", "").toLowerCase();
-    const language =
-      ext === "ts" || ext === "tsx"
-        ? "typescript"
-        : ext === "sol"
-          ? "solidity"
-          : ext === "rs"
-            ? "rust"
-            : ext;
-
-    // --- Parser State ---
+    // State
     let currentChapterId: string | null = null;
-    let currentSectionTitle = "Overview"; // Default section if none specified (e.g. @section: "Overview")
-
-    // We capture code lines in a buffer until we hit "@end"
+    let currentSectionTitle = "Overview";
     let isCapturingCode = false;
     let activeSnippetId: string | null = null;
     let codeBuffer: string[] = [];
@@ -69,90 +56,103 @@ export class DocParser {
     for (const line of lines) {
       const trimmed = line.trim();
 
-      // ---------------------------------------------------------
-      // 1. Handle Directives (Control Flow)
-      // ---------------------------------------------------------
-
-      // A. Chapter Definition: /// @chapter: id "Title"
+      // A. Chapter
       const chapterMatch = trimmed.match(
         /^\/\/\/\s*@chapter:\s*([a-z0-9-_]+)\s+"(.+)"/,
       );
       if (chapterMatch) {
-        const id = chapterMatch[1];
-        const title = chapterMatch[2];
+        const [_, id, title] = chapterMatch;
         if (id && title) {
           currentChapterId = id;
-          this.ensureChapter(id, title);
+          this.ensureChapter(id, title, filePath);
         }
         continue;
       }
 
-      // B. Priority: /// @priority: 10
+      // B. Section
+      const sectionMatch = trimmed.match(/^\/\/\/\s*@section:\s*"(.*)"/);
+      if (sectionMatch && currentChapterId) {
+        currentSectionTitle = sectionMatch[1]!;
+        this.ensureSection(currentChapterId, currentSectionTitle);
+        continue;
+      }
+
+      // C. Priority
       const priorityMatch = trimmed.match(/^\/\/\/\s*@priority:\s*(\d+)/);
       if (priorityMatch && currentChapterId) {
-        const chapter = this.chapters.get(currentChapterId);
-        if (chapter) {
-          const priority = parseInt(priorityMatch[1] ?? "100", 10);
-          chapter.priority = Number.isNaN(priority) ? 100 : priority;
-        }
+        const ch = this.chapters.get(currentChapterId);
+        if (ch) ch.priority = parseInt(priorityMatch[1]!, 10);
         continue;
       }
 
-      // C. Section Header: /// @section: "Title"
-      const sectionMatch = trimmed.match(/^\/\/\/\s*@section:\s*"(.*)"/);
-      if (sectionMatch) {
-        const title = sectionMatch[1];
-        if (title && currentChapterId) {
-          currentSectionTitle = title;
-          // Ensure the section exists so we can write to it immediately
-          this.ensureSection(currentChapterId, currentSectionTitle);
-        }
-        continue;
-      }
+      // D. Include: /// @include: "path" { json }
+      const includeMatch = trimmed.match(
+        /^\/\/\/\s*@include:\s*"([^"]+)"(?:\s+(\{.*\}))?/,
+      );
+      if (includeMatch && currentChapterId) {
+        const targetPath = includeMatch[1]!;
+        const rawOptions = includeMatch[2];
+        const options: IncludeOptions = rawOptions
+          ? JSON.parse(rawOptions)
+          : {};
 
-      // D. Code Block Start: // @start: snippet-id
-      const startMatch = trimmed.match(/^\/\/\s*@start:\s*([a-z0-9-_]+)/);
-      if (startMatch) {
-        const snippetId = startMatch[1];
-        if (snippetId) {
-          // If we were already capturing, flush the previous block first
-          if (isCapturingCode && activeSnippetId && currentChapterId) {
-            this.flushCodeBuffer(
-              currentChapterId,
-              currentSectionTitle,
-              activeSnippetId,
-              codeBuffer,
-              language,
-              filePath,
-            );
-          }
-
-          isCapturingCode = true;
-          activeSnippetId = snippetId;
+        // Flush existing code buffer
+        if (isCapturingCode && activeSnippetId) {
+          this.addCodeBlock(currentChapterId, currentSectionTitle, {
+            content: this.dedent(codeBuffer),
+            id: activeSnippetId,
+            language,
+            sourceFile: filePath,
+            type: "code",
+          });
+          isCapturingCode = false;
+          activeSnippetId = null;
           codeBuffer = [];
         }
+
+        this.handleInclude(
+          currentChapterId,
+          currentSectionTitle,
+          targetPath,
+          filePath,
+          options,
+        );
         continue;
       }
 
-      // E. Code Block End: // @end: snippet-id
+      // E. Start Code
+      const startMatch = trimmed.match(/^\/\/\s*@start:\s*([a-z0-9-_]+)/);
+      if (startMatch) {
+        if (isCapturingCode && activeSnippetId && currentChapterId) {
+          this.addCodeBlock(currentChapterId, currentSectionTitle, {
+            content: this.dedent(codeBuffer),
+            id: activeSnippetId,
+            language,
+            sourceFile: filePath,
+            type: "code",
+          });
+        }
+        isCapturingCode = true;
+        activeSnippetId = startMatch[1]!;
+        codeBuffer = [];
+        continue;
+      }
+
+      // F. End Code
       const endMatch = trimmed.match(/^\/\/\s*@end:\s*([a-z0-9-_]+)/);
       if (endMatch) {
-        const snippetId = endMatch[1];
-        // Only stop if the ID matches what we are currently capturing
         if (
           isCapturingCode &&
-          snippetId === activeSnippetId &&
-          currentChapterId &&
-          activeSnippetId
+          activeSnippetId === endMatch[1] &&
+          currentChapterId
         ) {
-          this.flushCodeBuffer(
-            currentChapterId,
-            currentSectionTitle,
-            activeSnippetId,
-            codeBuffer,
+          this.addCodeBlock(currentChapterId, currentSectionTitle, {
+            content: this.dedent(codeBuffer),
+            id: activeSnippetId!,
             language,
-            filePath,
-          );
+            sourceFile: filePath,
+            type: "code",
+          });
           isCapturingCode = false;
           activeSnippetId = null;
           codeBuffer = [];
@@ -160,36 +160,171 @@ export class DocParser {
         continue;
       }
 
-      // F. Ignore Directive: // @ignore
-      if (trimmed.startsWith("// @ignore")) {
-        continue;
-      }
+      // G. Content
+      if (trimmed.startsWith("// @ignore")) continue;
 
-      // ---------------------------------------------------------
-      // 2. Handle Content (Markdown or Code)
-      // ---------------------------------------------------------
-
-      // Case A: Markdown Line (starts with ///)
       if (trimmed.startsWith("///")) {
-        // Strip the marker
         const text = line.replace(/^\s*\/\/\/\s?/, "");
-
-        if (currentChapterId) {
+        if (currentChapterId)
           this.addMarkdownBlock(currentChapterId, currentSectionTitle, text);
-        }
-      }
-      // Case B: Code Line (inside @start ... @end)
-      else if (isCapturingCode) {
+      } else if (isCapturingCode) {
         codeBuffer.push(line);
       }
     }
   }
 
-  // --- Helper Methods ---
+  // --- Logic ---
 
-  private ensureChapter(id: string, title: string): void {
+  private handleInclude(
+    chapterId: string,
+    sectionTitle: string,
+    targetPath: string,
+    currentFilePath: string,
+    options: IncludeOptions,
+  ) {
+    const resolvedPath = this.resolveIncludePath(targetPath, currentFilePath);
+    if (!resolvedPath) {
+      docgenLogger(`[DocParser] Warning: Missing include "${targetPath}"`);
+      return;
+    }
+
+    try {
+      let content = fs.readFileSync(resolvedPath, "utf-8");
+      const language = this.getLanguageFromExtension(resolvedPath);
+      const filename = path.basename(resolvedPath);
+
+      if (options.strip) {
+        content = this.stripComments(content);
+      }
+
+      this.addCodeBlock(
+        chapterId,
+        sectionTitle,
+        {
+          content: content.trim(),
+          id: `include-${filename}`,
+          language,
+          sourceFile: resolvedPath,
+          title: options.tabTitle || filename, // Default tab title is filename
+          type: "code",
+        },
+        options.group,
+      );
+    } catch (e) {
+      docgenLogger(`[DocParser] Include Error: ${(e as Error).message}`);
+    }
+  }
+
+  /**
+   * Adds a code block to the section.
+   * Smartly merges it into a TabsBlock if a 'group' ID is provided and matches the previous block.
+   */
+  private addCodeBlock(
+    chapterId: string,
+    sectionTitle: string,
+    block: CodeBlock,
+    groupId?: string,
+  ) {
+    const section = this.ensureSection(chapterId, sectionTitle);
+    if (!section) return;
+
+    if (groupId) {
+      // Check if the *last* block is a TabsBlock with the same group ID
+      const lastBlock = section.blocks[section.blocks.length - 1];
+
+      if (
+        lastBlock &&
+        lastBlock.type === "tabs" &&
+        lastBlock.groupId === groupId
+      ) {
+        // Merge into existing tab group
+        lastBlock.tabs.push(block);
+      } else {
+        // Start a new tab group
+        const tabsBlock: TabsBlock = {
+          groupId,
+          tabs: [block],
+          type: "tabs",
+        };
+        section.blocks.push(tabsBlock);
+      }
+    } else {
+      // No grouping, just add as standalone code
+      section.blocks.push(block);
+    }
+  }
+
+  // --- Helpers ---
+
+  /**
+   * Smart comment stripper.
+   * - Removes comments but preserves intentional code spacing.
+   * - Removes lines that become empty ONLY because they contained a comment.
+   */
+  private stripComments(content: string): string {
+    // 1. Remove Block Comments first (/* ... */)
+    // We do this globally because they can span lines.
+    // Replacing with empty string might leave awkward gaps, but usually acceptable for block comments.
+    const withoutBlocks = content.replace(/\/\*[\s\S]*?\*\//gm, "");
+
+    // 2. Process Line-by-Line to handle single-line comments (//)
+    return withoutBlocks
+      .split("\n")
+      .reduce((acc: string[], line) => {
+        // Check if the line is ALREADY empty/whitespace before we touch it
+        const isWhitespaceInitially = line.trim().length === 0;
+
+        // Strip the // comment (ignoring URLs)
+        // If the line has code + comment (e.g., "const x = 1; // init"), this keeps "const x = 1; "
+        const cleanedLine = line.replace(/(?<!http:|https:)\/\/.*$/, "");
+
+        // Check if it is empty AFTER stripping
+        const isWhitespaceFinally = cleanedLine.trim().length === 0;
+
+        // LOGIC:
+        // 1. If it has content now -> Keep it.
+        // 2. If it was empty initially -> Keep it (User's intentional spacing).
+        // 3. If it became empty only after stripping -> Drop it (It was a full-line comment).
+        if (!isWhitespaceFinally || isWhitespaceInitially) {
+          // Use strict trimRight to remove trailing spaces left by the comment
+          acc.push(cleanedLine.trimEnd());
+        }
+
+        return acc;
+      }, [])
+      .join("\n");
+  }
+
+  private resolveIncludePath(
+    target: string,
+    currentFile: string,
+  ): string | null {
+    if (path.isAbsolute(target)) return fs.existsSync(target) ? target : null;
+    if (target.startsWith(".")) {
+      const res = path.resolve(path.dirname(currentFile), target);
+      return fs.existsSync(res) ? res : null;
+    }
+    // Deep Search
+    const candidates = globSync(`**/${target}`, {
+      absolute: true,
+      cwd: this.config.rootDir,
+      ignore: this.config.excludeGlobs,
+      nodir: true,
+    });
+    return candidates[0] || null;
+  }
+
+  private getLanguageFromExtension(p: string): string {
+    const ext = path.extname(p).replace(".", "").toLowerCase();
+    if (ext === "ts" || ext === "tsx") return "typescript";
+    if (ext === "sol") return "solidity";
+    return ext;
+  }
+
+  private ensureChapter(id: string, title: string, filePath: string) {
     if (!this.chapters.has(id)) {
       this.chapters.set(id, {
+        filePath,
         id,
         priority: 100,
         sections: [],
@@ -198,98 +333,38 @@ export class DocParser {
     }
   }
 
-  private ensureSection(
-    chapterId: string,
-    sectionTitle: string,
-  ): DocSection | undefined {
-    const chapter = this.chapters.get(chapterId);
-    if (!chapter) return undefined;
-
-    let section = chapter.sections.find((s) => s.title === sectionTitle);
-    if (!section) {
-      section = { blocks: [], title: sectionTitle };
-      chapter.sections.push(section);
+  private ensureSection(cid: string, title: string): DocSection | undefined {
+    const ch = this.chapters.get(cid);
+    if (!ch) return undefined;
+    let sec = ch.sections.find((s) => s.title === title);
+    if (!sec) {
+      sec = { blocks: [], title };
+      ch.sections.push(sec);
     }
-    return section;
+    return sec;
   }
 
-  private addMarkdownBlock(
-    chapterId: string,
-    sectionTitle: string,
-    text: string,
-  ): void {
-    const section = this.ensureSection(chapterId, sectionTitle);
-    if (!section) return;
-
-    // Optimization: If the last block was markdown, append to it instead of creating a new block
-    // This makes the output markdown cleaner (fewer logic breaks)
-    const lastBlock = section.blocks[section.blocks.length - 1];
-    if (lastBlock && lastBlock.type === "markdown") {
-      lastBlock.content += `\n${text}`;
-    } else {
-      section.blocks.push({
-        content: text,
-        type: "markdown",
-      });
-    }
-  }
-
-  private flushCodeBuffer(
-    chapterId: string,
-    sectionTitle: string,
-    snippetId: string,
-    buffer: string[],
-    language: string,
-    filePath: string,
-  ): void {
-    const section = this.ensureSection(chapterId, sectionTitle);
-    if (!section) return;
-
-    if (buffer.length === 0) return;
-
-    // Clean up indentation
-    const cleanCode = this.dedent(buffer);
-
-    section.blocks.push({
-      content: cleanCode,
-      id: snippetId,
-      language,
-      sourceFile: filePath,
-      type: "code",
-    });
+  private addMarkdownBlock(cid: string, title: string, text: string) {
+    const sec = this.ensureSection(cid, title);
+    if (!sec) return;
+    const last = sec.blocks[sec.blocks.length - 1];
+    if (last && last.type === "markdown") last.content += `\n${text}`;
+    else sec.blocks.push({ content: text, type: "markdown" });
   }
 
   private dedent(lines: string[]): string {
-    // Clone array to avoid mutating buffer
     const buffer = [...lines];
-
-    // Remove leading empty lines
-    while (buffer.length > 0 && buffer[0]?.trim() === "") {
-      buffer.shift();
-    }
-    // Remove trailing empty lines
-    while (buffer.length > 0 && buffer[buffer.length - 1]?.trim() === "") {
+    while (buffer.length > 0 && !buffer[0]!.trim()) buffer.shift();
+    while (buffer.length > 0 && !buffer[buffer.length - 1]!.trim())
       buffer.pop();
-    }
-
     if (buffer.length === 0) return "";
-
-    // Find minimum indentation
-    let minIndent = Infinity;
-    for (const line of buffer) {
-      if (line.trim() === "") continue;
-      const match = line.match(/^\s*/);
-      const len = match ? match[0].length : 0;
-      if (len < minIndent) minIndent = len;
-    }
-
-    if (minIndent === Infinity) return buffer.join("\n");
-
-    return buffer
-      .map((line) => {
-        // Leave empty lines as-is, slice others
-        return line.trim() === "" ? "" : line.slice(minIndent);
-      })
-      .join("\n");
+    const minIndent = buffer.reduce((min, l) => {
+      if (!l.trim()) return min;
+      const len = l.match(/^\s*/)![0].length;
+      return len < min ? len : min;
+    }, Infinity);
+    return minIndent === Infinity
+      ? buffer.join("\n")
+      : buffer.map((l) => (l.trim() ? l.slice(minIndent) : "")).join("\n");
   }
 }

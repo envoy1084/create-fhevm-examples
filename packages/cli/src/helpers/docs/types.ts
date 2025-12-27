@@ -11,9 +11,16 @@ export interface CodeBlock {
   content: string; // The actual code
   language: string; // "typescript", "solidity", etc.
   sourceFile: string; // File path for reference
+  title?: string; // Optional title for the code block
 }
 
-export type DocBlock = MarkdownBlock | CodeBlock;
+export interface TabsBlock {
+  type: "tabs";
+  groupId: string; // Identifier to merge consecutive blocks
+  tabs: CodeBlock[];
+}
+
+export type DocBlock = MarkdownBlock | CodeBlock | TabsBlock;
 
 export interface DocSection {
   title: string;
@@ -25,4 +32,5 @@ export interface DocChapter {
   title: string;
   priority: number;
   sections: DocSection[];
+  filePath: string;
 }

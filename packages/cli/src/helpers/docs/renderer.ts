@@ -80,6 +80,20 @@ export class MarkdownRenderer {
           md += `\`\`\`${block.language}\n`;
           md += `${block.content}\n`;
           md += `\`\`\`\n\n`;
+        } else if (block.type === "tabs") {
+          // GitBook Tabs Syntax
+          md += `{% tabs %}\n`;
+
+          for (const tab of block.tabs) {
+            const title = tab.title || "Code";
+            md += `{% tab title="${title}" %}\n`;
+            md += `\`\`\`${tab.language}\n`;
+            md += `${tab.content}\n`;
+            md += `\`\`\`\n`;
+            md += `{% endtab %}\n`;
+          }
+
+          md += `{% endtabs %}\n\n`;
         }
       }
 
