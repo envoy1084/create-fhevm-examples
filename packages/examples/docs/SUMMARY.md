@@ -9,6 +9,7 @@
 * [Bitwise Operations](chapters/bitwise-operations.md)
 * [Comparison Logic](chapters/comparison-operations.md)
 * [Reorg Protection](chapters/reorg-protection.md)
+* [Branching (If/Else)](chapters/branching.md)
 * [Access Control (ACL)](chapters/access-control.md)
 
 ## API Reference
@@ -18,4 +19,5 @@
 * [Comparison](api/beginner/comparison/Comparison.md)
 * [Counter](api/beginner/counter/Counter.md)
 * [AccessControl](api/intermediate/access-control/AccessControl.md)
+* [Branching](api/intermediate/branching/Branching.md)
 * [Reorgs](api/intermediate/reorgs/Reorgs.md)
