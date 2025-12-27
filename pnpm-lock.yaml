@@ -120,6 +120,12 @@ importers:
       '@fhevm/solidity':
         specifier: ^0.9.1
         version: 0.9.1
+      '@openzeppelin/confidential-contracts':
+        specifier: ^0.3.0
+        version: 0.3.0(@fhevm/solidity@0.9.1)(@openzeppelin/contracts-upgradeable@5.4.0(@openzeppelin/contracts@5.4.0))(@openzeppelin/contracts@5.4.0)
+      '@openzeppelin/contracts':
+        specifier: ^5.4.0
+        version: 5.4.0
       encrypted-types:
         specifier: ^0.0.4
         version: 0.0.4
@@ -142,6 +148,9 @@ importers:
       '@types/chai':
         specifier: ^5.2.3
         version: 5.2.3
+      '@types/chai-as-promised':
+        specifier: ^8.0.2
+        version: 8.0.2
       '@types/node':
         specifier: ^24.10.4
         version: 24.10.4
@@ -951,6 +960,21 @@ packages:
   '@nomicfoundation/solidity-analyzer@0.1.2':
     resolution: {integrity: sha512-q4n32/FNKIhQ3zQGGw5CvPF6GTvDCpYwIf7bEY/dZTZbgfDsHyjJwURxUJf3VQuuJj+fDIFl4+KkBVbw4Ef6jA==}
     engines: {node: '>= 12'}
+
+  '@openzeppelin/confidential-contracts@0.3.0':
+    resolution: {integrity: sha512-SccPGH4RgmKNtNBhv6gU85Ek/MT99fuI09o14xN4gd6PBrjEetUoAS01dlevP1lpqbAoyM8oiXshOEJ86M5tyw==}
+    peerDependencies:
+      '@fhevm/solidity': 0.9.1
+      '@openzeppelin/contracts': ^5.4.0
+      '@openzeppelin/contracts-upgradeable': ^5.4.0
+
+  '@openzeppelin/contracts-upgradeable@5.4.0':
+    resolution: {integrity: sha512-STJKyDzUcYuB35Zub1JpWW58JxvrFFVgQ+Ykdr8A9PGXgtq/obF5uoh07k2XmFyPxfnZdPdBdhkJ/n2YxJ87HQ==}
+    peerDependencies:
+      '@openzeppelin/contracts': 5.4.0
+
+  '@openzeppelin/contracts@5.4.0':
+    resolution: {integrity: sha512-eCYgWnLg6WO+X52I16TZt8uEjbtdkgLC0SUX/xnAksjjrQI4Xfn4iBRoI5j55dmlOhDv1Y7BoR3cU7e3WWhC6A==}
 
   '@rollup/rollup-android-arm-eabi@4.54.0':
     resolution: {integrity: sha512-OywsdRHrFvCdvsewAInDKCNyR3laPA2mc9bRYJ6LBp5IyvF3fvXbbNR0bSzHlZVFtn6E0xw2oZlyjg4rKCVcng==}
@@ -4928,6 +4952,18 @@ snapshots:
       '@nomicfoundation/solidity-analyzer-linux-x64-gnu': 0.1.2
       '@nomicfoundation/solidity-analyzer-linux-x64-musl': 0.1.2
       '@nomicfoundation/solidity-analyzer-win32-x64-msvc': 0.1.2
+
+  '@openzeppelin/confidential-contracts@0.3.0(@fhevm/solidity@0.9.1)(@openzeppelin/contracts-upgradeable@5.4.0(@openzeppelin/contracts@5.4.0))(@openzeppelin/contracts@5.4.0)':
+    dependencies:
+      '@fhevm/solidity': 0.9.1
+      '@openzeppelin/contracts': 5.4.0
+      '@openzeppelin/contracts-upgradeable': 5.4.0(@openzeppelin/contracts@5.4.0)
+
+  '@openzeppelin/contracts-upgradeable@5.4.0(@openzeppelin/contracts@5.4.0)':
+    dependencies:
+      '@openzeppelin/contracts': 5.4.0
+
+  '@openzeppelin/contracts@5.4.0': {}
 
   '@rollup/rollup-android-arm-eabi@4.54.0':
     optional: true

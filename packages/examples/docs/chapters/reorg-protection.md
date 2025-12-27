@@ -114,11 +114,10 @@ contract ReorgHandling is ZamaEthereumConfig {
     error NotEnoughTimePassed();
     error PrivateKeyAlreadyInitialized();
 
-    constructor() {
-    }
-    
+    constructor() {}
+
     function setPrivateKey(externalEuint256 _privateKey, bytes memory inputProof, uint256 _price) external {
-        if(isPrivateKeyInitialized) { 
+        if (isPrivateKeyInitialized) {
             revert PrivateKeyAlreadyInitialized();
         }
 
