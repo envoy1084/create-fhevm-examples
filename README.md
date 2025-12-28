@@ -12,8 +12,6 @@ The fastest way to bootstrap privacy-preserving dApps on FHEVM.
 - ⚡️ **Developer Experience**: Pre-configured with `typescript`, `typechain`, and `fhevm-mocks` for fast local testing.
 - 🔧 **Flexible**: Supports `npm`, `pnpm`, `yarn`, and `bun` out of the box.
 
----
-
 ## 🏁 Quick Start
 
 To create a new project, simply run:
@@ -94,14 +92,14 @@ title: "Encrypted Counter"
 
 To update the counter, we must provide an encrypted input.
 
-```typescript
+\`\`\`typescript
 const input = await fhevm.createEncryptedInput(contractAddress, user.address)
   .add32(1)
   .encrypt();
 
 const tx = await contract.increment(input.handles[0], input.inputProof);
 await tx.wait();
-```
+\`\`\`
 ```
 
 ### Supported Directives

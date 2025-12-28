@@ -189,9 +189,9 @@ title: "Encrypted Math"
 
 FHE addition is homomorphic.
 
-```typescript
+\`\`\`typescript
 const a = await encrypt(5);
 const b = await encrypt(10);
 const res = contract.add(a, b);
-```
+\`\`\`
 ```
