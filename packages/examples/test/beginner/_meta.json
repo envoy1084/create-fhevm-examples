@@ -1,0 +1,6 @@
+{
+  "arithmetic/encrypted-arithmetic": "Arithmetic",
+  "counter/encrypted-counter": "Counter",
+  "bitwise/bitwise-operations": "Bitwise",
+  "comparison/comparison-operations": "Comparison"
+}

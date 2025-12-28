@@ -1,5 +1,5 @@
 ---
-title: Confidential ERC20
+title: "Confidential ERC20"
 ---
 
 ## Overview
@@ -126,6 +126,7 @@ await tx.wait();
 
 {% tabs %}
 {% tab title="ConfidentialERC20.sol" %}
+{% code title="ConfidentialERC20.sol" %}
 ```solidity
 // SPDX-License-Identifier: BSD-3-Clause-Clear
 pragma solidity ^0.8.24;
@@ -150,8 +151,10 @@ contract ConfidentialERC20 is ZamaEthereumConfig, ERC7984, Ownable2Step {
     }
 }
 ```
+{% endcode %}
 {% endtab %}
 {% tab title="confidential-erc20.test.ts" %}
+{% code title="confidential-erc20.test.ts" %}
 ```typescript
 import { FhevmType } from "@fhevm/hardhat-plugin";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
@@ -270,6 +273,7 @@ describe("Confidential ERC20", () => {
   });
 });
 ```
+{% endcode %}
 {% endtab %}
 {% endtabs %}
 

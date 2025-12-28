@@ -49,19 +49,23 @@ async function main() {
 
   await copyWithGitignore(TEMPLATES_SRC, TEMPLATES_DEST);
 
-  const examplesFolders = await fs.readdir(EXAMPLES_SRC);
+  const levels = ["beginner", "intermediate", "advanced"];
 
-  for (const folder of examplesFolders) {
-    const example = folder;
+  for (const level of levels) {
+    const examplesFolders = await fs.readdir(path.join(EXAMPLES_SRC, level));
 
-    const contractPath = path.join(EXAMPLES_SRC, example);
-    const testsPath = path.join(TESTS_SRC, example);
+    for (const folder of examplesFolders) {
+      const example = folder;
 
-    const contractDestPath = path.join(EXAMPLES_DEST, example, "contracts");
-    const testsDestPath = path.join(EXAMPLES_DEST, example, "test");
+      const contractPath = path.join(EXAMPLES_SRC, level, example);
+      const testsPath = path.join(TESTS_SRC, level, example);
 
-    await copyWithGitignore(contractPath, contractDestPath);
-    await copyWithGitignore(testsPath, testsDestPath);
+      const contractDestPath = path.join(EXAMPLES_DEST, example, "contracts");
+      const testsDestPath = path.join(EXAMPLES_DEST, example, "test");
+
+      await copyWithGitignore(contractPath, contractDestPath);
+      await copyWithGitignore(testsPath, testsDestPath);
+    }
   }
 
   folderSize(DEST, (err, bytes) => {

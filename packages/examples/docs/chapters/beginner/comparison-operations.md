@@ -1,5 +1,5 @@
 ---
-title: Comparison Logic
+title: "Comparison"
 ---
 
 ## Overview
@@ -192,6 +192,7 @@ expect(clearResult).to.eq(clear10 <= clear11);
 
 {% tabs %}
 {% tab title="Comparison.sol" %}
+{% code title="Comparison.sol" %}
 ```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
@@ -315,8 +316,10 @@ contract ComparisonOperations is ZamaEthereumConfig {
     }
 }
 ```
+{% endcode %}
 {% endtab %}
 {% tab title="comparison.test.ts" %}
+{% code title="comparison.test.ts" %}
 ```typescript
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { expect } from "chai";
@@ -526,6 +529,7 @@ describe("Comparison Operations", () => {
   });
 });
 ```
+{% endcode %}
 {% endtab %}
 {% endtabs %}
 

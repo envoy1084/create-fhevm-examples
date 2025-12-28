@@ -1,4 +1,4 @@
-import path from "node:path";
+import * as path from "node:path";
 
 export interface DocgenConfig {
   rootDir: string;
@@ -11,7 +11,7 @@ export interface DocgenConfig {
 export const buildConfig = (projectRoot: string): DocgenConfig => {
   return {
     excludeGlobs: ["**/node_modules/**", "**/*.d.ts"],
-    includeGlobs: ["test/**/*.ts", "contracts/**/*.sol"], // Adjust as needed
+    includeGlobs: ["test/**/*.ts", "contracts/**/*.sol"],
     outDir: path.resolve(projectRoot, "docs/chapters"),
     rootDir: projectRoot,
     summaryFile: path.resolve(projectRoot, "docs/SUMMARY.md"),

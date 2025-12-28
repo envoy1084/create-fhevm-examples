@@ -1,5 +1,5 @@
 ---
-title: Decryption Patterns
+title: "Decryption Patterns"
 ---
 
 ## Overview
@@ -162,6 +162,7 @@ expect(publicValue).to.eq(clearValue);
 
 {% tabs %}
 {% tab title="Decryption.sol" %}
+{% code title="Decryption.sol" %}
 ```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
@@ -202,8 +203,10 @@ contract Decryption is ZamaEthereumConfig {
     }
 }
 ```
+{% endcode %}
 {% endtab %}
 {% tab title="decryption.test.ts" %}
+{% code title="decryption.test.ts" %}
 ```typescript
 import { FhevmType } from "@fhevm/hardhat-plugin";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
@@ -356,6 +359,7 @@ describe("Decryption Patterns", () => {
   });
 });
 ```
+{% endcode %}
 {% endtab %}
 {% endtabs %}
 

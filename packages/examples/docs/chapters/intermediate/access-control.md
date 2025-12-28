@@ -1,5 +1,5 @@
 ---
-title: Access Control (ACL)
+title: "Access Control (ACL)"
 ---
 
 ## Overview
@@ -152,6 +152,7 @@ await tx.wait();
 
 {% tabs %}
 {% tab title="AccessControl.sol" %}
+{% code title="AccessControl.sol" %}
 ```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
@@ -200,8 +201,10 @@ contract AccessControlB is ZamaEthereumConfig {
     }
 }
 ```
+{% endcode %}
 {% endtab %}
 {% tab title="access-control.test.ts" %}
+{% code title="access-control.test.ts" %}
 ```typescript
 import { FhevmType } from "@fhevm/hardhat-plugin";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
@@ -359,6 +362,7 @@ describe("Access Control", () => {
   });
 });
 ```
+{% endcode %}
 {% endtab %}
 {% endtabs %}
 

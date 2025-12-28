@@ -1,5 +1,5 @@
 ---
-title: Reorg Protection
+title: "Reorg Protection"
 ---
 
 ## Overview
@@ -91,6 +91,7 @@ await contract.connect(signers.bob).requestACL();
 
 {% tabs %}
 {% tab title="Reorgs.sol" %}
+{% code title="Reorgs.sol" %}
 ```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
@@ -155,8 +156,10 @@ contract ReorgHandling is ZamaEthereumConfig {
     }
 }
 ```
+{% endcode %}
 {% endtab %}
 {% tab title="reorgs.test.ts" %}
+{% code title="reorgs.test.ts" %}
 ```typescript
 import { FhevmType } from "@fhevm/hardhat-plugin";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
@@ -283,6 +286,7 @@ describe("Reorg Protection", () => {
   });
 });
 ```
+{% endcode %}
 {% endtab %}
 {% endtabs %}
 

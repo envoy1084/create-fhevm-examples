@@ -1,5 +1,5 @@
 ---
-title: Encrypted Arithmetic
+title: "Arithmetic"
 ---
 
 ## Overview
@@ -260,6 +260,7 @@ expect(clearValueAfterMax).to.eq(Math.max(clear10, clear11));
 
 {% tabs %}
 {% tab title="Arithmetic.sol" %}
+{% code title="Arithmetic.sol" %}
 ```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
@@ -403,8 +404,10 @@ contract EncryptedArithmetic is ZamaEthereumConfig {
     }
 }
 ```
+{% endcode %}
 {% endtab %}
 {% tab title="arithmetic.test.ts" %}
+{% code title="arithmetic.test.ts" %}
 ```typescript
 import { FhevmType } from "@fhevm/hardhat-plugin";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
@@ -649,6 +652,7 @@ describe("EncryptedArithmetic", () => {
   });
 });
 ```
+{% endcode %}
 {% endtab %}
 {% endtabs %}
 

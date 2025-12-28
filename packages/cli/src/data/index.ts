@@ -20,7 +20,7 @@ export const examples: Example[] = [
       name: "@fhevm-examples/counter",
       version: "0.0.1",
     },
-    path: "beginner/counter",
+    path: "counter",
     value: "counter",
   },
   {
@@ -34,7 +34,7 @@ export const examples: Example[] = [
       name: "@fhevm-examples/arithmetic",
       version: "0.0.1",
     },
-    path: "beginner/arithmetic",
+    path: "arithmetic",
     value: "arithmetic",
   },
 ];

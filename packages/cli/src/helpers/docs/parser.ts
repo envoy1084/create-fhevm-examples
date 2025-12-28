@@ -1,5 +1,8 @@
-/** biome-ignore-all lint/complexity/noExcessiveCognitiveComplexity: safe */
+// /** biome-ignore-all lint/complexity/noExcessiveCognitiveComplexity: safe */
 /** biome-ignore-all lint/style/noNonNullAssertion: safe */
+/** biome-ignore-all lint/complexity/noExcessiveCognitiveComplexity: safe */
+// /** biome-ignore-all lint/style/noNonNullAssertion: safe */
+
 import * as fs from "node:fs";
 import * as path from "node:path";
 
@@ -11,8 +14,8 @@ import type { CodeBlock, DocChapter, DocSection, TabsBlock } from "./types.js";
 
 interface IncludeOptions {
   strip?: boolean;
-  group?: string; // Group ID for tabs
-  tabTitle?: string; // Display name in the tab
+  group?: string;
+  tabTitle?: string;
 }
 
 export class DocParser {
@@ -36,15 +39,18 @@ export class DocParser {
       this.processFile(filePath);
     }
 
-    return Array.from(this.chapters.values()).sort(
-      (a, b) => a.priority - b.priority,
-    );
+    return Array.from(this.chapters.values());
   }
 
   private processFile(filePath: string): void {
     const content = fs.readFileSync(filePath, "utf-8");
     const lines = content.split("\n");
     const language = this.getLanguageFromExtension(filePath);
+
+    // Relative dir for Meta resolution later
+    const relativeDir = path.dirname(
+      path.relative(this.config.rootDir, filePath),
+    );
 
     // State
     let currentChapterId: string | null = null;
@@ -56,7 +62,7 @@ export class DocParser {
     for (const line of lines) {
       const trimmed = line.trim();
 
-      // A. Chapter
+      // A. Chapter Definition
       const chapterMatch = trimmed.match(
         /^\/\/\/\s*@chapter:\s*([a-z0-9-_]+)\s+"(.+)"/,
       );
@@ -64,12 +70,12 @@ export class DocParser {
         const [_, id, title] = chapterMatch;
         if (id && title) {
           currentChapterId = id;
-          this.ensureChapter(id, title, filePath);
+          this.ensureChapter(id, title, filePath, relativeDir);
         }
         continue;
       }
 
-      // B. Section
+      // B. Section Header
       const sectionMatch = trimmed.match(/^\/\/\/\s*@section:\s*"(.*)"/);
       if (sectionMatch && currentChapterId) {
         currentSectionTitle = sectionMatch[1]!;
@@ -77,7 +83,7 @@ export class DocParser {
         continue;
       }
 
-      // C. Priority
+      // C. Priority (Optional legacy support, _meta.json preferred)
       const priorityMatch = trimmed.match(/^\/\/\/\s*@priority:\s*(\d+)/);
       if (priorityMatch && currentChapterId) {
         const ch = this.chapters.get(currentChapterId);
@@ -85,31 +91,30 @@ export class DocParser {
         continue;
       }
 
-      // D. Include: /// @include: "path" { json }
+      // D. Include Directive
       const includeMatch = trimmed.match(
         /^\/\/\/\s*@include:\s*"([^"]+)"(?:\s+(\{.*\}))?/,
       );
       if (includeMatch && currentChapterId) {
         const targetPath = includeMatch[1]!;
-        const rawOptions = includeMatch[2];
+        const rawOptions = includeMatch[2]!;
         const options: IncludeOptions = rawOptions
           ? JSON.parse(rawOptions)
           : {};
 
-        // Flush existing code buffer
         if (isCapturingCode && activeSnippetId) {
-          this.addCodeBlock(currentChapterId, currentSectionTitle, {
-            content: this.dedent(codeBuffer),
-            id: activeSnippetId,
+          this.flushCode(
+            currentChapterId,
+            currentSectionTitle,
+            activeSnippetId,
+            codeBuffer,
             language,
-            sourceFile: filePath,
-            type: "code",
-          });
+            filePath,
+          );
           isCapturingCode = false;
           activeSnippetId = null;
           codeBuffer = [];
         }
-
         this.handleInclude(
           currentChapterId,
           currentSectionTitle,
@@ -120,17 +125,18 @@ export class DocParser {
         continue;
       }
 
-      // E. Start Code
+      // E. Start Code Capture
       const startMatch = trimmed.match(/^\/\/\s*@start:\s*([a-z0-9-_]+)/);
       if (startMatch) {
         if (isCapturingCode && activeSnippetId && currentChapterId) {
-          this.addCodeBlock(currentChapterId, currentSectionTitle, {
-            content: this.dedent(codeBuffer),
-            id: activeSnippetId,
+          this.flushCode(
+            currentChapterId,
+            currentSectionTitle,
+            activeSnippetId,
+            codeBuffer,
             language,
-            sourceFile: filePath,
-            type: "code",
-          });
+            filePath,
+          );
         }
         isCapturingCode = true;
         activeSnippetId = startMatch[1]!;
@@ -138,7 +144,7 @@ export class DocParser {
         continue;
       }
 
-      // F. End Code
+      // F. End Code Capture
       const endMatch = trimmed.match(/^\/\/\s*@end:\s*([a-z0-9-_]+)/);
       if (endMatch) {
         if (
@@ -146,13 +152,14 @@ export class DocParser {
           activeSnippetId === endMatch[1] &&
           currentChapterId
         ) {
-          this.addCodeBlock(currentChapterId, currentSectionTitle, {
-            content: this.dedent(codeBuffer),
-            id: activeSnippetId!,
+          this.flushCode(
+            currentChapterId,
+            currentSectionTitle,
+            activeSnippetId!,
+            codeBuffer,
             language,
-            sourceFile: filePath,
-            type: "code",
-          });
+            filePath,
+          );
           isCapturingCode = false;
           activeSnippetId = null;
           codeBuffer = [];
@@ -166,7 +173,7 @@ export class DocParser {
       if (trimmed.startsWith("///")) {
         const text = line.replace(/^\s*\/\/\/\s?/, "");
         if (currentChapterId)
-          this.addMarkdownBlock(currentChapterId, currentSectionTitle, text);
+          this.addMarkdown(currentChapterId, currentSectionTitle, text);
       } else if (isCapturingCode) {
         codeBuffer.push(line);
       }
@@ -215,10 +222,23 @@ export class DocParser {
     }
   }
 
-  /**
-   * Adds a code block to the section.
-   * Smartly merges it into a TabsBlock if a 'group' ID is provided and matches the previous block.
-   */
+  private flushCode(
+    cid: string,
+    sid: string,
+    id: string,
+    buf: string[],
+    lang: string,
+    src: string,
+  ) {
+    this.addCodeBlock(cid, sid, {
+      content: this.dedent(buf),
+      id,
+      language: lang,
+      sourceFile: src,
+      type: "code",
+    });
+  }
+
   private addCodeBlock(
     chapterId: string,
     sectionTitle: string,
@@ -229,7 +249,6 @@ export class DocParser {
     if (!section) return;
 
     if (groupId) {
-      // Check if the *last* block is a TabsBlock with the same group ID
       const lastBlock = section.blocks[section.blocks.length - 1];
 
       if (
@@ -237,10 +256,8 @@ export class DocParser {
         lastBlock.type === "tabs" &&
         lastBlock.groupId === groupId
       ) {
-        // Merge into existing tab group
         lastBlock.tabs.push(block);
       } else {
-        // Start a new tab group
         const tabsBlock: TabsBlock = {
           groupId,
           tabs: [block],
@@ -249,47 +266,22 @@ export class DocParser {
         section.blocks.push(tabsBlock);
       }
     } else {
-      // No grouping, just add as standalone code
       section.blocks.push(block);
     }
   }
 
   // --- Helpers ---
 
-  /**
-   * Smart comment stripper.
-   * - Removes comments but preserves intentional code spacing.
-   * - Removes lines that become empty ONLY because they contained a comment.
-   */
   private stripComments(content: string): string {
-    // 1. Remove Block Comments first (/* ... */)
-    // We do this globally because they can span lines.
-    // Replacing with empty string might leave awkward gaps, but usually acceptable for block comments.
     const withoutBlocks = content.replace(/\/\*[\s\S]*?\*\//gm, "");
-
-    // 2. Process Line-by-Line to handle single-line comments (//)
     return withoutBlocks
       .split("\n")
       .reduce((acc: string[], line) => {
-        // Check if the line is ALREADY empty/whitespace before we touch it
         const isWhitespaceInitially = line.trim().length === 0;
-
-        // Strip the // comment (ignoring URLs)
-        // If the line has code + comment (e.g., "const x = 1; // init"), this keeps "const x = 1; "
         const cleanedLine = line.replace(/(?<!http:|https:)\/\/.*$/, "");
-
-        // Check if it is empty AFTER stripping
         const isWhitespaceFinally = cleanedLine.trim().length === 0;
-
-        // LOGIC:
-        // 1. If it has content now -> Keep it.
-        // 2. If it was empty initially -> Keep it (User's intentional spacing).
-        // 3. If it became empty only after stripping -> Drop it (It was a full-line comment).
-        if (!isWhitespaceFinally || isWhitespaceInitially) {
-          // Use strict trimRight to remove trailing spaces left by the comment
+        if (!isWhitespaceFinally || isWhitespaceInitially)
           acc.push(cleanedLine.trimEnd());
-        }
-
         return acc;
       }, [])
       .join("\n");
@@ -304,7 +296,6 @@ export class DocParser {
       const res = path.resolve(path.dirname(currentFile), target);
       return fs.existsSync(res) ? res : null;
     }
-    // Deep Search
     const candidates = globSync(`**/${target}`, {
       absolute: true,
       cwd: this.config.rootDir,
@@ -316,17 +307,25 @@ export class DocParser {
 
   private getLanguageFromExtension(p: string): string {
     const ext = path.extname(p).replace(".", "").toLowerCase();
-    if (ext === "ts" || ext === "tsx") return "typescript";
-    if (ext === "sol") return "solidity";
-    return ext;
+    return ext === "ts" || ext === "tsx"
+      ? "typescript"
+      : ext === "sol"
+        ? "solidity"
+        : ext;
   }
 
-  private ensureChapter(id: string, title: string, filePath: string) {
+  private ensureChapter(
+    id: string,
+    title: string,
+    filePath: string,
+    relativeDir: string,
+  ) {
     if (!this.chapters.has(id)) {
       this.chapters.set(id, {
         filePath,
         id,
         priority: 100,
+        relativeDir,
         sections: [],
         title,
       });
@@ -344,7 +343,7 @@ export class DocParser {
     return sec;
   }
 
-  private addMarkdownBlock(cid: string, title: string, text: string) {
+  private addMarkdown(cid: string, title: string, text: string) {
     const sec = this.ensureSection(cid, title);
     if (!sec) return;
     const last = sec.blocks[sec.blocks.length - 1];

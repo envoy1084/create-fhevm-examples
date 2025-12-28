@@ -1,5 +1,5 @@
 ---
-title: Branching (If/Else)
+title: "Branching"
 ---
 
 ## Overview
@@ -94,6 +94,7 @@ expect(clearValueAfter).to.eq(10);
 
 {% tabs %}
 {% tab title="Branching.sol" %}
+{% code title="Branching.sol" %}
 ```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
@@ -125,8 +126,10 @@ contract Branching is ZamaEthereumConfig {
     }
 }
 ```
+{% endcode %}
 {% endtab %}
 {% tab title="branching.test.ts" %}
+{% code title="branching.test.ts" %}
 ```typescript
 import { FhevmType } from "@fhevm/hardhat-plugin";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
@@ -228,6 +231,7 @@ describe("Branching Logic", () => {
   });
 });
 ```
+{% endcode %}
 {% endtab %}
 {% endtabs %}
 

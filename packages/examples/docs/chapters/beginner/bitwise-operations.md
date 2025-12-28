@@ -1,5 +1,5 @@
 ---
-title: Bitwise Operations
+title: "Bitwise"
 ---
 
 ## Overview
@@ -277,6 +277,7 @@ expect(clearResult).to.eq(expected);
 
 {% tabs %}
 {% tab title="Bitwise.sol" %}
+{% code title="Bitwise.sol" %}
 ```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
@@ -436,8 +437,10 @@ contract BitwiseOperations is ZamaEthereumConfig {
     }
 }
 ```
+{% endcode %}
 {% endtab %}
 {% tab title="bitwise.test.ts" %}
+{% code title="bitwise.test.ts" %}
 ```typescript
 import { FhevmType } from "@fhevm/hardhat-plugin";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
@@ -726,6 +729,7 @@ describe("Bitwise Operations", () => {
   });
 });
 ```
+{% endcode %}
 {% endtab %}
 {% endtabs %}
 

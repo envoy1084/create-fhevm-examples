@@ -1,5 +1,5 @@
 ---
-title: Encrypted Counter
+title: "Counter"
 ---
 
 ## Overview
@@ -141,6 +141,7 @@ expect(result).to.eq(0);
 
 {% tabs %}
 {% tab title="Counter.sol" %}
+{% code title="Counter.sol" %}
 ```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
@@ -188,8 +189,10 @@ contract FHECounter is ZamaEthereumConfig {
     }
 }
 ```
+{% endcode %}
 {% endtab %}
 {% tab title="counter.test.ts" %}
+{% code title="counter.test.ts" %}
 ```typescript
 import { FhevmType } from "@fhevm/hardhat-plugin";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
@@ -308,6 +311,7 @@ describe("FHECounter", () => {
   });
 });
 ```
+{% endcode %}
 {% endtab %}
 {% endtabs %}
 

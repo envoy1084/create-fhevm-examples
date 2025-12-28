@@ -1,4 +1,16 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.3.10/schema.json",
-  "extends": ["@fhevm-examples/config/biome"]
+  "extends": ["@fhevm-examples/config/biome"],
+  "overrides": [
+    {
+      "assist": {
+        "actions": {
+          "source": {
+            "useSortedKeys": "off"
+          }
+        }
+      },
+      "includes": ["**/_meta.json"]
+    }
+  ]
 }
