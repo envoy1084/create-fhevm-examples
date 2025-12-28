@@ -53,7 +53,7 @@ export const getArguments = async (): Promise<PromptAnswers> => {
       example: () => {
         return prompt.select({
           initialValue: "counter",
-          maxItems: 5,
+          maxItems: 6,
           message: "What example do you want to use?",
           options: examples.map((v) => ({
             hint: v.description,
