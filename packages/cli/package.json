@@ -49,6 +49,10 @@
   "license": "MIT",
   "name": "create-fhevm-examples",
   "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/envoy1084/create-fhevm-examples"
+  },
   "scripts": {
     "build": "tsup",
     "dev": "vitest",
