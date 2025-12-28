@@ -1,5 +1,3 @@
-# 🚀 Create FHEVM Examples
-
 The fastest way to bootstrap privacy-preserving dApps on FHEVM.
 
 `create-fhevm-examples` is a CLI tool that scaffolds a production-ready FHEVM project in seconds. It comes pre-configured with Hardhat, Zama's FHE libraries, and a powerful "Docs-as-Code" engine that automatically generates GitBook-compatible documentation from your test files.
