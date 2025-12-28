@@ -29,7 +29,6 @@
   "scripts": {
     "clean": "rimraf  ./fhevmTemp ./artifacts ./cache ./coverage ./types ./coverage.json ./dist",
     "compile": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat compile",
-    "docgen": "hardhat docgen",
     "test": "hardhat test"
   },
   "version": "0.0.0"

@@ -41,6 +41,8 @@
     "build": "tsup",
     "dev": "vitest",
     "postbuild": "node ./scripts/postbuild.mjs",
+    "postpack": "rm ./README.md",
+    "prepack": "cp ../../README.md ./README.md",
     "test": "vitest run"
   },
   "type": "module",

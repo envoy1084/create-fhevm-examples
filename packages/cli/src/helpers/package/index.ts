@@ -6,6 +6,7 @@ import fs from "fs-extra";
 import type { PackageJson } from "type-fest";
 
 import { examples } from "../../data/index.js";
+import { getPackageVersion } from "../../resolve/examples.js";
 import { logger } from "../logger.js";
 import { mergeTwoPackageJsons, safeParse } from "./merge.js";
 
@@ -53,15 +54,26 @@ export const updatePackageJson = async (
   }
 
   const pmVersion = await getPackageManagerVersion(pm);
+  const packageVersion = await getPackageVersion();
 
-  const additions: PackageJson = {
-    packageManager: `${pm}@${pmVersion}`,
+  const { dependencies, scripts, ...rest } = example.packageJson;
+
+  const newDeps = {
+    ...(dependencies ?? {}),
+    "create-fhevm-examples": `^${packageVersion}`,
   };
 
-  const newPackageJson = mergeTwoPackageJsons(
-    packageJson,
-    mergeTwoPackageJsons(example.packageJson, additions),
-  );
+  const newScripts = {
+    ...(scripts ?? {}),
+    docgen: "create-fhevm-examples docgen",
+  };
+
+  const newPackageJson = mergeTwoPackageJsons(packageJson, {
+    dependencies: newDeps,
+    packageManager: `${pm}@${pmVersion}`,
+    scripts: newScripts,
+    ...rest,
+  } as PackageJson);
 
   await fs.writeFile(
     packageJsonPath,

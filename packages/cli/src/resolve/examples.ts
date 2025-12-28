@@ -1,7 +1,10 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import fsExtra from "fs-extra";
+
 import { examples } from "../data/index.js";
+import { safeParse } from "../helpers/package/merge.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,4 +27,11 @@ export const resolveExamplePath = (opts: ResolveExamplePathOptions) => {
 export const getTemplatePath = () => {
   const templateRoot = path.join(__dirname, "template");
   return templateRoot;
+};
+
+export const getPackageVersion = async () => {
+  const packageRoot = path.join(__dirname, "../package.json");
+  const content = await fsExtra.readFile(packageRoot, "utf-8");
+  const packageJson = safeParse(content, "Template Directory");
+  return packageJson.version;
 };
