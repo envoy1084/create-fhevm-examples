@@ -1,5 +1,11 @@
 # create-fhevm-examples
 
+## 0.0.5
+
+### Patch Changes
+
+- 301ff5d: pin hardhat plugin versions
+
 ## 0.0.4
 
 ### Patch Changes
