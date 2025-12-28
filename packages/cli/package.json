@@ -19,7 +19,7 @@
     "ts-morph": "^27.0.2",
     "which-pm-runs": "^1.1.0"
   },
-  "description": "",
+  "description": "The fastest way to bootstrap privacy-preserving dApps on FHEVM.",
   "devDependencies": {
     "@fhevm-examples/config": "workspace:*",
     "@types/debug": "^4.1.12",
@@ -33,7 +33,19 @@
     "vitest": "^4.0.16"
   },
   "files": ["dist"],
-  "keywords": [],
+  "keywords": [
+    "create-fhevm-examples",
+    "fhevm-examples",
+    "fhevm",
+    "examples",
+    "boilerplate",
+    "template",
+    "cli",
+    "create",
+    "generator",
+    "scaffold",
+    "project"
+  ],
   "license": "MIT",
   "name": "create-fhevm-examples",
   "private": false,
